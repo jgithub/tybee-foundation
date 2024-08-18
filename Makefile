@@ -3,7 +3,7 @@ FILENAME := MyTybeeProject-lambda-$(shell date '+%Y%m%d_%H%M').zip
 
 .PHONY: runDev
 runDev:
-	LOG_DEBUG=1 LOG_INFO=1 LOG_TRACE=1 npx tsx src/runDev.ts
+	LOG_DEBUG=1 LOG_INFO=1 LOG_TRACE=1 npx tsx src/server.ts
 
 
 .PHONY: dist

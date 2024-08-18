@@ -5,3 +5,4 @@ If you are building a Node + Typescript, I strongly recommend considering the ap
 ## Quickstart
 * npm use 20
 * npm install
+* make runDev

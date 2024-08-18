@@ -20,7 +20,9 @@
     "eslint": "^9.4.0",
     "mocha": "^10.4.0",
     "tsx": "^4.10.4",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0"    
   },
   "mocha": {
     "node-option": [

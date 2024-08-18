@@ -1,0 +1,42 @@
+{
+  "name": "MyTybeeProject",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "LOG_DEBUG=1 LOG_INFO=1 LOG_TRACE=1 npx tsx src/index.ts",
+    "test": "npx mocha 'test/**/*.spec.ts'"
+  },
+  "keywords": [],
+  "author": "jeano AT jeano DOT net",
+  "license": "See LICENSE file",
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "@types/chai": "^4.3.16",
+    "@types/eslint__js": "^8.42.3",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.12.12",
+    "@typescript-eslint/eslint-plugin": "^8.1.0",
+    "@typescript-eslint/parser": "^8.1.0",
+    "chai": "^5.1.1",
+    "eslint": "^9.9.0",
+    "mocha": "^10.4.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.10.4",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.1.0"
+  },
+  "mocha": {
+    "node-option": [
+      "import=tsx"
+    ]
+  },
+  "dependencies": {
+    "@jgithub/ts-gist-pile": "jgithub/ts-gist-pile.git#v0.0.39",
+    "dotenv": "^16.4.5",
+    "inversify": "^6.0.2"
+  }
+}

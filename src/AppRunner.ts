@@ -3,8 +3,6 @@ import { getLogger, d4l, DateProviderService } from '@jgithub/ts-gist-pile';
 const LOG = getLogger(`AppRunner`)
 import * as dotenv from "dotenv";
 dotenv.config()
-import * as fs from 'fs';
-import * as path from 'path';
 import container from './inversify.config'
 import DI_TYPES from "./diTypes";
 

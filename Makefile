@@ -6,6 +6,15 @@ runDev:
 	LOG_DEBUG=1 LOG_INFO=1 LOG_TRACE=1 npx tsx src/server.ts
 
 
+.PHONY: lint
+lint:
+	cd ${ROOT_DIR} && npx eslint **/*.ts
+
+.PHONY: lintFix
+lintFix:
+	cd ${ROOT_DIR} && npx eslint --fix **/*.ts
+
+
 .PHONY: dist
 dist: cleandist
 	cd ${ROOT_DIR} && ${MAKE} build

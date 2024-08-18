@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@jgithub/ts-gist-pile": "jgithub/ts-gist-pile.git#v0.0.39",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "inversify": "^6.0.2"
   }
 }

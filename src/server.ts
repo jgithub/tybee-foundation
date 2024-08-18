@@ -1,5 +1,5 @@
-import { DevRunner } from './DevRunner'
+import { AppRunner } from './AppRunner'
 
 (async () => {
-  await new DevRunner().run();
+  await new AppRunner().run();
 })()

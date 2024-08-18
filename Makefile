@@ -27,7 +27,7 @@ cleandist:
 
 .PHONY: test
 test:
-	cd ${ROOT_DIR} && TZ='America/Chicago' LOG_DEBUG=1 LOG_TRACE=0 LOG_INFO=1 TS_NODE_COMPILER_OPTIONS='{"module": "commonjs"}' npx mocha -r ts-node/register 'test/**/*.test.ts'
+	cd ${ROOT_DIR} && TZ='America/Chicago' LOG_DEBUG=1 LOG_TRACE=0 LOG_INFO=1 TS_NODE_COMPILER_OPTIONS='{"module": "commonjs"}' npx mocha 'test/**/*.test.ts'
 #	cd ${ROOT_DIR} && npm test
 
 .PHONE: cli

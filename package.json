@@ -12,7 +12,6 @@
   "keywords": [],
   "author": "jeano AT jeano DOT net",
   "license": "See LICENSE file",
-  "homepage": "https://github.com/FunnelEnvy/ga4auditor#readme",
   "devDependencies": {
     "@types/chai": "^4.3.16",
     "@types/mocha": "^10.0.6",

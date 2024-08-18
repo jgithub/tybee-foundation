@@ -1,0 +1,35 @@
+{
+  "name": "MyTybeeProject",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "LOG_DEBUG=1 LOG_INFO=1 LOG_TRACE=1 npx tsx src/index.ts",
+    "test": "npx mocha 'test/**/*.spec.ts'"
+  },
+  "keywords": [],
+  "author": "jeano AT jeano DOT net",
+  "license": "See LICENSE file",
+  "homepage": "https://github.com/FunnelEnvy/ga4auditor#readme",
+  "devDependencies": {
+    "@types/chai": "^4.3.16",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.12.12",
+    "chai": "^5.1.1",
+    "eslint": "^9.4.0",
+    "mocha": "^10.4.0",
+    "tsx": "^4.10.4",
+    "typescript": "^5.4.5"
+  },
+  "mocha": {
+    "node-option": [
+      "import=tsx"
+    ]
+  },
+  "dependencies": {
+    "@jgithub/ts-gist-pile": "jgithub/ts-gist-pile.git#v0.0.39",
+    "dotenv": "^16.4.5"
+  }
+}

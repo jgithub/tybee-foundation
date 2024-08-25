@@ -20,6 +20,7 @@ export class AppRunner {
     const port = process.env.PORT || 3000;
     
 
+    // TODO: Move this to routing definition
     app.get("/healthcheck", (req: Request, res: Response) => {
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ message: 'ok'}));

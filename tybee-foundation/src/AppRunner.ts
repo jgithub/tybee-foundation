@@ -19,11 +19,17 @@ export class AppRunner {
     const app: Express = express();
     const port = process.env.PORT || 3000;
     
+    app.use(express.static('public'))
+    app.set('view engine', 'ejs');
 
     // TODO: Move this to routing definition
-    app.get("/healthcheck", (req: Request, res: Response) => {
+    app.get("/api/v1/healthcheck", (req: Request, res: Response) => {
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ message: 'ok'}));
+    });
+
+    app.get('/', (req, res) => {
+      res.render('index', { title: 'Hello, world!' });
     });
 
     app.listen(port, () => {

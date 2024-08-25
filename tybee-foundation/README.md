@@ -28,3 +28,6 @@ Asymptotically moving in the direction of "perfect 80/20" for a web backend.  In
 * GraphQL?
 * Talking to LLMs
 * Postgres
+
+## Prompts
+* Hey GPT... what is the easiest way to render HTML with server side typescript?

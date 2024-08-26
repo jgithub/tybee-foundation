@@ -1,12 +1,8 @@
 import { Request, Response } from 'express';
-import { BASE_PATH } from "../constant";
 import { getLogger, d4l } from '@jgithub/ts-gist-pile';
 import { SysConfigSvc } from '../sysconfig/SysConfigSvc';
 const LOG = getLogger(`UserSessionController`)
 
-const controllerProps = {
-  BASE_PATH: BASE_PATH
-}
 
 export class UserSessionController {
   // private userService: UserService;

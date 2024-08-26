@@ -1,1 +1,7 @@
 BASE_PATH=""
+PGHOST="localhost"
+PGUSER="postgres"
+PGPASSWORD="password"
+PGDATABASE="postgres"
+PGPORT=5432
+PGSSL=true

@@ -8,6 +8,9 @@ Asymptotically moving in the direction of "perfect 80/20" for a web backend.  In
 * make test
 * make lint
 * make runDev
+* psql -U postgres 
+* psql -U postgres -p 5432 -h localhost
+* PGPASSWORD=password psql -U postgres -p 5432 -h localhost
 
 ## What's Already Here
 * Typescript + Static typing 🎉

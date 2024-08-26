@@ -57,7 +57,7 @@ export class AppRunner {
     });
 
     app.get(`${BASE_PATH}instructions`, (req, res) => {
-      res.render('instructions', { ...everywhereConfig });
+      res.render('instructions', { ...everywhereConfig, title: 'Hello, world!' });
     });
 
     app.post(`${BASE_PATH}user/session/create`, (req, res) => {

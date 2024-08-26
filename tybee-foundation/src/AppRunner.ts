@@ -6,7 +6,7 @@ import container from './inversify.config'
 import DI_TYPES from "./diTypes";
 import express, { Express, Request, Response } from "express";
 dotenv.config()
-
+// import sassMiddleware from 'express-dart-sass';
 
 export class AppRunner {
   public async run(): Promise<boolean> {
@@ -21,6 +21,15 @@ export class AppRunner {
     
     app.use(express.static('public'))
     app.set('view engine', 'ejs');
+
+    // app.use(
+    //   sass.middleware({
+    //       src: __dirname + '/sass', //where the sass files are 
+    //       dest: __dirname + '/public', //where css should go
+    //       debug: true // obvious
+    //   })
+    // );
+
 
     // TODO: Move this to routing definition
     app.get("/api/v1/healthcheck", (req: Request, res: Response) => {

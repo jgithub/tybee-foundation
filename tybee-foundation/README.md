@@ -30,4 +30,8 @@ Asymptotically moving in the direction of "perfect 80/20" for a web backend.  In
 * Postgres
 
 ## Prompts
-* Hey GPT... what is the easiest way to render HTML with server side typescript?
+* Hey GPT... Awhat is the easiest way to render HTML with server side typescript?
+
+
+## See Also
+* https://stackoverflow.com/questions/14242536/how-do-you-install-sass-with-express

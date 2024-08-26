@@ -8,7 +8,8 @@ import express, { Express, Request, Response } from "express";
 dotenv.config()
 import { BASE_PATH } from "./constant";
 import bodyParser from "body-parser";
-import router from './route/route';
+import { RouterBuilderSvc } from './route/RouterBuilderSvc';
+import { SysConfigSvc } from './sysconfig/SysConfigSvc';
 // import sassMiddleware from 'express-dart-sass';
 
 export class AppRunner {
@@ -17,6 +18,7 @@ export class AppRunner {
     LOG.debug(`run(): Entering.  NODE_ENV = ${d4l(process.env.NODE_ENV)},  cwd = ${process.cwd()}`)
     const dateProviderService = container.get<DateProviderService>(DI_TYPES.DateProviderService);
     LOG.debug(`run(): Time at the tone is ${d4l(dateProviderService.getNow())}`)
+    const routerBuilderSvc = container.get<RouterBuilderSvc>(DI_TYPES.RouterBuilderSvc);
 
 
     const app: Express = express();
@@ -37,17 +39,17 @@ export class AppRunner {
     //   })
     // );
 
-    const everywhereConfig = {
+    const controllerProps = {
       BASE_PATH: BASE_PATH
     }
 
-
+    const router = routerBuilderSvc.build();
     app.use(`${BASE_PATH}`, router);
 
     // TODO: Move this to routing definition
     app.get(`${BASE_PATH}api/v1/healthcheck`, (req: Request, res: Response) => {
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ ...everywhereConfig, message: 'ok'}));
+      res.end(JSON.stringify({ ...controllerProps, message: 'ok'}));
     });
 
     app.get(`${BASE_PATH}`, (req: Request, res: Response) => {
@@ -55,20 +57,20 @@ export class AppRunner {
     });
 
     // app.get(`${BASE_PATH}user/session/new`, (req, res) => {
-    //   res.render('user/session/new', { ...everywhereConfig, title: 'Hello, world!' });
+    //   res.render('user/session/new', { ...controllerProps, title: 'Hello, world!' });
     // });
 
     
 
     app.get(`${BASE_PATH}instructions`, (req, res) => {
-      res.render('instructions', { ...everywhereConfig, title: 'Hello, world!' });
+      res.render('instructions', { ...controllerProps, title: 'Hello, world!' });
     });
 
     // app.post(`${BASE_PATH}user/session/create`, (req, res) => {
     //   LOG.debug(`run(): [user/session/create] Entering with req = ${d4l(req)}`)
     //   LOG.debug(`run(): [user/session/create] Entering with req.body = ${d4l(req.body)}`)
     //   LOG.debug(`run(): [user/session/create] Entering with req.query = ${d4l(req.query)}`)
-    //   res.render('user/session/create', { ...everywhereConfig, title: 'Hello, world!' });
+    //   res.render('user/session/create', { ...controllerProps, title: 'Hello, world!' });
     // });
 
     app.listen(port, () => {

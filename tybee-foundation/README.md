@@ -21,13 +21,15 @@ Asymptotically moving in the direction of "perfect 80/20" for a web backend.  In
 
 ## TODO
 * tsx vs ts-node
-* NestJS vs FoalTS vs Blitz.js
+* twitter bootstrap
+* EJX vs next.js vs NestJS vs FoalTS vs Blitz.js
 * Lambda support
 * Server-generated HTML (like Rails)
 * ExpressJS?
 * GraphQL?
 * Talking to LLMs
 * Postgres
+* Service vs Svc
 
 ## Prompts
 * Hey GPT... Awhat is the easiest way to render HTML with server side typescript?

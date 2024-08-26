@@ -14,7 +14,6 @@
   "license": "See LICENSE file",
   "devDependencies": {
     "@eslint/js": "^9.9.0",
-    "@types/bootstrap": "^5.2.10",
     "@types/chai": "^4.3.16",
     "@types/eslint__js": "^8.42.3",
     "@types/mocha": "^10.0.6",
@@ -37,13 +36,9 @@
   },
   "dependencies": {
     "@jgithub/ts-gist-pile": "jgithub/ts-gist-pile.git#v0.0.39",
-    "@popperjs/core": "^2.11.8",
-    "bootstrap": "^5.3.3",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
-    "inversify": "^6.0.2",
-    "popper": "^1.0.1",
-    "sass": "^1.77.8"
+    "inversify": "^6.0.2"
   }
 }

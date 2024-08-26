@@ -1,57 +1,92 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    <link href="./css/bootstrap.css" rel="stylesheet">
-    <script src="./js/bootstrap.bundle.min.js"></script>
+    <title>
+        <%= title %>
+    </title>
+    <link href="<%= BASE_PATH %>css/bootstrap.css" rel="stylesheet">
+    <script src="<%= BASE_PATH %>/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        .sign-in-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
+
 <body>
-    <h1><%= title %></h1>
+    <h1>
+        <%= title %>
+    </h1>
     <button class="btn btn-primary">Click me</button>
+    <div class="container">
+        <div class="sign-in-container">
+            <h3 class="text-center">Sign In</h3>
+            <form action="<%= BASE_PATH %>user/session/create" method="POST"  enctype="application/json">
+                <div class="mb-3">
+                    <label for="user_id" class="form-label">User ID</label>
+                    <input type="text" class="form-control" id="user_id" name="user_id" placeholder="User ID">
+                </div>
+                <div class="mb-3">
+                    <label for="pin" class="form-label">PIN</label>
+                    <input type="text" class="form-control" id="pin" name="pin" placeholder="PIN">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Sign In</button>
+            </form>
+        </div>
+    </div>
+
 </body>
 <script lang="javascript">
-// Request access to the microphone
-navigator.mediaDevices.getUserMedia({ audio: true })
-  .then(stream => {
-    const mediaRecorder = new MediaRecorder(stream);
-    const audioChunks = [];
+    // Request access to the microphone
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            const mediaRecorder = new MediaRecorder(stream);
+            const audioChunks = [];
 
-    // When data is available, store it in the audioChunks array
-    mediaRecorder.ondataavailable = event => {
-      audioChunks.push(event.data);
-    };
+            // When data is available, store it in the audioChunks array
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
 
-    // Start recording
-    mediaRecorder.start();
+            // Start recording
+            mediaRecorder.start();
 
-    // Stop recording after 5 seconds (or use a stop button)
-    setTimeout(() => {
-      mediaRecorder.stop();
-    }, 1000);
+            // Stop recording after 5 seconds (or use a stop button)
+            setTimeout(() => {
+                mediaRecorder.stop();
+            }, 1000);
 
-    // When the recording stops, process and upload the data
-    mediaRecorder.onstop = () => {
-      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      const formData = new FormData();
-      formData.append('audio', audioBlob, 'recording.webm');
+            // When the recording stops, process and upload the data
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                const formData = new FormData();
+                formData.append('audio', audioBlob, 'recording.webm');
 
-      // Upload the audio file
-      fetch('/upload', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Upload success:', data);
-      })
-      .catch(error => {
-        console.error('Upload failed:', error);
-      });
-    };
-  })
-  .catch(error => {
-    console.error('Microphone access denied:', error);
-  });</script>
+                // Upload the audio file
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Upload success:', data);
+                    })
+                    .catch(error => {
+                        console.error('Upload failed:', error);
+                    });
+            };
+        })
+        .catch(error => {
+            console.error('Microphone access denied:', error);
+        });</script>
+
 </html>

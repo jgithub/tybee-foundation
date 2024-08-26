@@ -64,12 +64,12 @@ export class AppRunner {
       res.render('instructions', { ...everywhereConfig, title: 'Hello, world!' });
     });
 
-    app.post(`${BASE_PATH}user/session/create`, (req, res) => {
-      LOG.debug(`run(): [user/session/create] Entering with req = ${d4l(req)}`)
-      LOG.debug(`run(): [user/session/create] Entering with req.body = ${d4l(req.body)}`)
-      LOG.debug(`run(): [user/session/create] Entering with req.query = ${d4l(req.query)}`)
-      res.render('user/session/create', { ...everywhereConfig, title: 'Hello, world!' });
-    });
+    // app.post(`${BASE_PATH}user/session/create`, (req, res) => {
+    //   LOG.debug(`run(): [user/session/create] Entering with req = ${d4l(req)}`)
+    //   LOG.debug(`run(): [user/session/create] Entering with req.body = ${d4l(req.body)}`)
+    //   LOG.debug(`run(): [user/session/create] Entering with req.query = ${d4l(req.query)}`)
+    //   res.render('user/session/create', { ...everywhereConfig, title: 'Hello, world!' });
+    // });
 
     app.listen(port, () => {
       console.log(`[server]: Server is running at http://localhost:${port}`);

@@ -49,11 +49,15 @@ export class AppRunner {
     });
 
     app.get(`${BASE_PATH}`, (req: Request, res: Response) => {
-      res.render('index', { ...everywhereConfig, title: 'Hello, world!' });
+      res.redirect(302, `${BASE_PATH}user/session/new`);
     });
 
     app.get(`${BASE_PATH}user/session/new`, (req, res) => {
-      res.render('index', { ...everywhereConfig, title: 'Hello, world!' });
+      res.render('user/session/new', { ...everywhereConfig, title: 'Hello, world!' });
+    });
+
+    app.get(`${BASE_PATH}instructions`, (req, res) => {
+      res.render('instructions', { ...everywhereConfig });
     });
 
     app.post(`${BASE_PATH}user/session/create`, (req, res) => {

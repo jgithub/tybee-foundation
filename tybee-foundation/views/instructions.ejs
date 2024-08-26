@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Instructions
+    </title>
+    <link href="<%= BASE_PATH %>css/bootstrap.css" rel="stylesheet">
+    <script src="<%= BASE_PATH %>js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <h1>
+        Instructions
+    </h1>
+    <button class="btn btn-primary">Click me</button>
+
+    <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" id="averageMicLevel" style="width: 0%"></div>
+    </div>
+      
+
+</body>
+<script lang="javascript">
+// Request access to the microphone
+navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+  .then(stream => {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioContext.createAnalyser();
+    const microphone = audioContext.createMediaStreamSource(stream);
+    const scriptProcessor = audioContext.createScriptProcessor(2048, 1, 1);
+
+    analyser.smoothingTimeConstant = 0.8;
+    analyser.fftSize = 1024;
+
+    microphone.connect(analyser);
+    analyser.connect(scriptProcessor);
+    scriptProcessor.connect(audioContext.destination);
+    
+    scriptProcessor.onaudioprocess = () => {
+      const array = new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteFrequencyData(array);
+
+      let values = 0;
+      const length = array.length;
+      for (let i = 0; i < length; i++) {
+        values += array[i];
+      }
+
+      const averageMicLevel = values / length;
+      // console.log('Average microphone level: ' + averageMicLevel);
+      document.getElementById('averageMicLevel').style.width = averageMicLevel + '%';
+    };
+  })
+  .catch(err => {
+    console.error('The following getUserMedia error occurred: ' + err);
+  });
+</script>
+</html>

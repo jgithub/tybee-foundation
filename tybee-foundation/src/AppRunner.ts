@@ -8,7 +8,7 @@ import express, { Express, Request, Response } from "express";
 dotenv.config()
 import { BASE_PATH } from "./constant";
 import bodyParser from "body-parser";
-
+import router from './route/route';
 // import sassMiddleware from 'express-dart-sass';
 
 export class AppRunner {
@@ -42,6 +42,8 @@ export class AppRunner {
     }
 
 
+    app.use(`${BASE_PATH}`, router);
+
     // TODO: Move this to routing definition
     app.get(`${BASE_PATH}api/v1/healthcheck`, (req: Request, res: Response) => {
       res.setHeader('Content-Type', 'application/json');
@@ -52,9 +54,11 @@ export class AppRunner {
       res.redirect(302, `${BASE_PATH}user/session/new`);
     });
 
-    app.get(`${BASE_PATH}user/session/new`, (req, res) => {
-      res.render('user/session/new', { ...everywhereConfig, title: 'Hello, world!' });
-    });
+    // app.get(`${BASE_PATH}user/session/new`, (req, res) => {
+    //   res.render('user/session/new', { ...everywhereConfig, title: 'Hello, world!' });
+    // });
+
+    
 
     app.get(`${BASE_PATH}instructions`, (req, res) => {
       res.render('instructions', { ...everywhereConfig, title: 'Hello, world!' });

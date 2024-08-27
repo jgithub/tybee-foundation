@@ -77,22 +77,9 @@ export class AppRunner {
       res.redirect(302, `${BASE_PATH}user/session/new`);
     });
 
-    // app.get(`${BASE_PATH}user/session/new`, (req, res) => {
-    //   res.render('user/session/new', { ...controllerProps, title: 'Hello, world!' });
-    // });
-
-    
-
     app.get(`${BASE_PATH}instructions`, (req, res) => {
       res.render('instructions', { ...controllerProps, title: 'Hello, world!' });
     });
-
-    // app.post(`${BASE_PATH}user/session/create`, (req, res) => {
-    //   LOG.debug(`run(): [user/session/create] Entering with req = ${d4l(req)}`)
-    //   LOG.debug(`run(): [user/session/create] Entering with req.body = ${d4l(req.body)}`)
-    //   LOG.debug(`run(): [user/session/create] Entering with req.query = ${d4l(req.query)}`)
-    //   res.render('user/session/create', { ...controllerProps, title: 'Hello, world!' });
-    // });
 
     app.listen(port, () => {
       console.log(`[server]: Server is running at http://localhost:${port}`);

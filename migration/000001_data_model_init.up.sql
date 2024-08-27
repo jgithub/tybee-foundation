@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS entity (
 
 CREATE TABLE IF NOT EXISTS session_question (
   uuid uuid PRIMARY KEY NOT NULL,
+  phrase VARCHAR (2048) NOT NULL,
   order_weight float NOT NULL,
   audio_file VARCHAR (2048) NOT NULL,
   audio_offset_begin double precision NULL,
@@ -65,7 +66,7 @@ CREATE TABLE IF NOT EXISTS session_answer (
 create function init_row_uuid_fn() returns trigger as $$
 begin
     if new.uuid is NULL then
-        new.C1 := uuid6();
+        new.uuid := uuid6();
     end if;
     return new;
 end

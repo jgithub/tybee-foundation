@@ -59,16 +59,6 @@ export class AppRunner {
         next();
       });
     });
-    
-    // app.use(express.json())
-    
-    // app.use(
-    //   sass.middleware({
-    //       src: __dirname + '/sass', //where the sass files are
-    //       dest: __dirname + '/public', //where css should go
-    //       debug: true // obvious
-    //   })
-    // );
 
     const controllerProps = {
       BASE_PATH: BASE_PATH

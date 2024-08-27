@@ -1,10 +1,10 @@
-import cloneDeep = require("lodash.clonedeep")
+import cloneDeep from "lodash.clonedeep"
 import * as crypto from "crypto";
 
 export class TransparentAuthToken implements TransparentAuthTokenAttr {
   private readonly attr: TransparentAuthTokenAttr;
 
-  private static readonly salt = 'salty'
+  private static readonly salt = 'f26b1d3b-9057-42d5-9a6c-c25ed30bfc2b'
 
   constructor(attr: TransparentAuthTokenAttr) {
     this.attr = cloneDeep(attr)

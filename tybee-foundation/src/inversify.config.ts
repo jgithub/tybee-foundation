@@ -20,7 +20,7 @@ const dateProviderService: DateProviderService = {
 const sysConfigSvc: SysConfigSvc = new SysConfigSvcImpl();
 const postgressConnectionProviderSvc = new PostgresConnectionProviderSvcImpl();
 const entityCrudSvc = new EntityCrudSvcImpl(postgressConnectionProviderSvc);
-const userSessionController = new UserSessionController(sysConfigSvc, entityCrudSvc);
+const userSessionController = new UserSessionController(sysConfigSvc, entityCrudSvc, dateProviderService);
 
 const requestInfoController = new RequestInfoController(postgressConnectionProviderSvc);
 const routerBuilderSvc = new RouterBuilderSvcImpl(userSessionController, requestInfoController);

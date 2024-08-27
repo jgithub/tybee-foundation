@@ -1,0 +1,76 @@
+<%- include('../../partials/header', {title: title}) %>
+<style>
+    .sign-in-container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div class="sign-in-container">
+            <h3 class="text-center">Enter User ID and PIN</h3>
+            <form action="<%= BASE_PATH %>user/session/create" method="POST"  enctype="application/json">
+                <div class="mb-3">
+                    <label for="username" class="form-label">User ID</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="User ID">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">PIN</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="PIN">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+<script lang="javascript">
+    // Request access to the microphone
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            const mediaRecorder = new MediaRecorder(stream);
+            const audioChunks = [];
+
+            // When data is available, store it in the audioChunks array
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+
+            // Start recording
+            mediaRecorder.start();
+
+            // Stop recording after 5 seconds (or use a stop button)
+            setTimeout(() => {
+                mediaRecorder.stop();
+            }, 1000);
+
+            // When the recording stops, process and upload the data
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                const formData = new FormData();
+                formData.append('audio', audioBlob, 'recording.webm');
+
+                // Upload the audio file
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Upload success:', data);
+                    })
+                    .catch(error => {
+                        console.error('Upload failed:', error);
+                    });
+            };
+        })
+        .catch(error => {
+            console.error('Microphone access denied:', error);
+        });</script>
+
+</html>

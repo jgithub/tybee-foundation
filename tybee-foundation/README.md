@@ -8,6 +8,9 @@ Asymptotically moving in the direction of "perfect 80/20" for a web backend.  In
 * make test
 * make lint
 * make runDev
+* psql -U postgres 
+* psql -U postgres -p 5432 -h localhost
+* PGPASSWORD=password psql -U postgres -p 5432 -h localhost
 
 ## What's Already Here
 * Typescript + Static typing 🎉
@@ -21,13 +24,19 @@ Asymptotically moving in the direction of "perfect 80/20" for a web backend.  In
 
 ## TODO
 * tsx vs ts-node
-* NestJS vs FoalTS vs Blitz.js
+* twitter bootstrap
+* EJX vs next.js vs NestJS vs FoalTS vs Blitz.js
 * Lambda support
 * Server-generated HTML (like Rails)
 * ExpressJS?
 * GraphQL?
 * Talking to LLMs
 * Postgres
+* Service vs Svc
 
 ## Prompts
-* Hey GPT... what is the easiest way to render HTML with server side typescript?
+* Hey GPT... Awhat is the easiest way to render HTML with server side typescript?
+
+
+## See Also
+* https://stackoverflow.com/questions/14242536/how-do-you-install-sass-with-express

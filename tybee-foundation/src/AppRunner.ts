@@ -43,10 +43,10 @@ export class AppRunner {
 
       const denormalizedCookieValue = req.cookies[TRANSPARENT_AUTH_TOKEN_COOKIE_NAME]
       LOG.debug(`run(): denormalizedCookieValue = ${d4l(denormalizedCookieValue)}`)
-      const transparentAuthToken = TransparentAuthToken.parseFromString(denormalizedCookieValue);
+      const transparentAuthToken: TransparentAuthToken | undefined = denormalizedCookieValue ? TransparentAuthToken.parseFromString(denormalizedCookieValue) : undefined;
       
       const store = {}
-      if (transparentAuthToken.isValid(dateProviderService.getNow())) {
+      if (transparentAuthToken != null && transparentAuthToken.isValid(dateProviderService.getNow())) {
         LOG.debug(`run(): [VALID] transparentAuthToken = ${d4l(transparentAuthToken)}.  authenticatedEntityId = ${d4l(transparentAuthToken.userId)}`);
         (store as any).authenticatedEntityId = transparentAuthToken.userId
         LOG.debug(`run(): Now store = ${d4l(store)}`);

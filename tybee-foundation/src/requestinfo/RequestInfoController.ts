@@ -1,4 +1,4 @@
-import { getLogger, d4l } from '@jgithub/ts-gist-pile';
+import { getLogger, d4l, JsonValue } from '@jgithub/ts-gist-pile';
 import { booleanUtil } from '@jgithub/ts-gist-pile';
 import pg from 'pg';
 import { Request, Response } from 'express';
@@ -17,24 +17,29 @@ export class RequestInfoController {
       ssl: booleanUtil.isTruelike(process.env.PGSSL)
     });
 
-    // Connect to the database
-    client.connect()
-      .then(() => console.log('Connected to PostgreSQL'))
-      .catch(err => console.error('Connection error', err.stack));
+    try {
 
-    // Example query
-    client.query('SELECT NOW()')
-      .then(resultSet => {
-        const timeAtTheTone = resultSet.rows[0].now;
-        console.log('timeAtTheTone', timeAtTheTone);
-        res.json({"serverDatetime": timeAtTheTone});
-      })
-      .catch(err => {
-        console.error('Query error', err.stack);
-      })
-      .finally(() => {
-        // Close the connection
-        client.end();
-      });
+      // Connect to the database
+      await client.connect();
+
+      // Example query
+      const responseJsonBody: JsonValue = {}
+
+      let resultSet = await client.query('SELECT NOW()')
+      const serverDatetime = resultSet.rows[0].now;
+      responseJsonBody["serverDatetime"] = serverDatetime;
+
+      resultSet = await client.query('SELECT COUNT(*) as count FROM entity')
+      const entityCount = Number(resultSet.rows[0].count);
+      responseJsonBody["entityCount"] = entityCount;
+
+      res.json(responseJsonBody);
+    } catch (err) {
+      console.error('Query error', err.stack);
+    }
+    finally {
+      // Close the connection
+      client.end();
+    };
   }
 }

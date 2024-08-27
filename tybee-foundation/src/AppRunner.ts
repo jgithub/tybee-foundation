@@ -6,13 +6,16 @@ import container from './inversify.config'
 import DI_TYPES from "./diTypes";
 import express, { Express, Request, Response } from "express";
 dotenv.config()
-import { BASE_PATH } from "./constant";
+import { BASE_PATH, TRANSPARENT_AUTH_TOKEN_COOKIE_NAME } from "./constant";
 import bodyParser from "body-parser";
 import { RouterBuilderSvc } from './route/RouterBuilderSvc';
 import { SysConfigSvc } from './sysconfig/SysConfigSvc';
 // import sassMiddleware from 'express-dart-sass';
 import { AsyncLocalStorage } from 'async_hooks'
 import cookieParser from 'cookie-parser';
+import { TransparentAuthToken } from './auth/TransparentAuthToken';
+import { RequestContext } from './request/RequestContext';
+import { asyncLocalStorage } from './request/MyOnlyAsyncLocalStorage';
 
 export class AppRunner {
   public async run(): Promise<boolean> {
@@ -38,13 +41,21 @@ export class AppRunner {
       LOG.debug(`run(): [middleware] Cookie processing with Entering with req = ${d4l(req)}`)
       LOG.debug(`run(): req.cookies = ${d4l(req.cookies)}`)
 
-      const storage = new AsyncLocalStorage()
-
-      const store = {
-        authenticatedEntityId: 12345
+      const denormalizedCookieValue = req.cookies[TRANSPARENT_AUTH_TOKEN_COOKIE_NAME]
+      LOG.debug(`run(): denormalizedCookieValue = ${d4l(denormalizedCookieValue)}`)
+      const transparentAuthToken = TransparentAuthToken.parseFromString(denormalizedCookieValue);
+      
+      const store = {}
+      if (transparentAuthToken.isValid(dateProviderService.getNow())) {
+        LOG.debug(`run(): [VALID] transparentAuthToken = ${d4l(transparentAuthToken)}.  authenticatedEntityId = ${d4l(transparentAuthToken.userId)}`);
+        (store as any).authenticatedEntityId = transparentAuthToken.userId
+        LOG.debug(`run(): Now store = ${d4l(store)}`);
       }
-      storage.run(store, async () => {
+
+      asyncLocalStorage.run(store, async () => {
         /* Some API Logic here*/
+        const authenticatedEntityId = RequestContext.tryGetAuthenticatedEntityId()
+        LOG.debug(`run(): RequestContext.tryGetAuthenticatedEntityId() = ${d4l(authenticatedEntityId)}`);
         next();
       });
     });

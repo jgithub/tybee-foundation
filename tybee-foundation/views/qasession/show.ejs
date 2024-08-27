@@ -1,11 +1,38 @@
 <%- include('../partials/header', {title: title}) %>
 
 <body>
-    <h1>
-        What is Your Favorite Color?
-    </h1>
+    <h1 id="question_phrase"></h1>
 </body>
 <script lang="Javascript">
-var sessionQuestions = <%- JSON.stringify(sessionQuestions) %>;  
+var gSessionQuestions = <%- JSON.stringify(sessionQuestions) %>;  
+
+async function findQuestionByUuid(uuid) {
+  return gSessionQuestions.find(question => question.uuid === uuid);
+}
+
+function getNextQuestionAsync() {
+  return new Promise((resolve, reject) => {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        // document.getElementById("demo").innerHTML =
+        // this.responseText;
+        // alert(this.responseText)
+        const jsonResponse = JSON.parse(this.responseText);
+        const questionUuid = jsonResponse.myNextQuestionUuid
+        resolve(questionUuid)
+      }
+    };
+    xhttp.open("GET", "/api/v1/ri", true);
+    xhttp.send();
+  })
+}
+
+window.addEventListener('load', async function () {
+  const questionUuid = await getNextQuestionAsync();
+  alert(questionUuid);
+  const question = await findQuestionByUuid(questionUuid);
+  document.getElementById('question_phrase').innerText = question.phrase;
+})
 </script>
 </html>

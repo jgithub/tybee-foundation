@@ -11,13 +11,9 @@
 </style>
 
 <body>
-    <h1>
-        <%= title %>
-    </h1>
-    <button class="btn btn-primary">Click me</button>
     <div class="container">
         <div class="sign-in-container">
-            <h3 class="text-center">Sign In</h3>
+            <h3 class="text-center">Enter User ID and PIN</h3>
             <form action="<%= BASE_PATH %>user/session/create" method="POST"  enctype="application/json">
                 <div class="mb-3">
                     <label for="username" class="form-label">User ID</label>

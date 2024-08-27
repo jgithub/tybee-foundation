@@ -2,11 +2,59 @@
 
 <body>
     <h1 id="question_phrase"></h1>
+    <form>
+      <input type="hidden" id="question_uuid" name="question_uuid" required>
+    </form>
+    <button class="btn btn-primary" onclick="triggerNextQuesionAsync()">Next Question</button>
 </body>
+<script lang="javascript">
+  // Request access to the microphone
+  navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+          const mediaRecorder = new MediaRecorder(stream);
+          const audioChunks = [];
+
+          // When data is available, store it in the audioChunks array
+          mediaRecorder.ondataavailable = event => {
+              audioChunks.push(event.data);
+          };
+
+          // Start recording
+          mediaRecorder.start();
+
+          // Stop recording after 5 seconds (or use a stop button)
+          setTimeout(() => {
+              mediaRecorder.stop();
+          }, 1000);
+
+          // When the recording stops, process and upload the data
+          mediaRecorder.onstop = () => {
+              const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+              const formData = new FormData();
+              formData.append('audio', audioBlob, 'recording.webm');
+
+              // Upload the audio file
+              fetch('/upload', {
+                  method: 'POST',
+                  body: formData
+              })
+                  .then(response => response.json())
+                  .then(data => {
+                      console.log('Upload success:', data);
+                  })
+                  .catch(error => {
+                      console.error('Upload failed:', error);
+                  });
+          };
+      })
+      .catch(error => {
+          console.error('Microphone access denied:', error);
+      });</script>
+
 <script lang="Javascript">
 var gSessionQuestions = <%- JSON.stringify(sessionQuestions) %>;  
 
-async function findQuestionByUuid(uuid) {
+async function findQuestionByUuidAsync(uuid) {
   return gSessionQuestions.find(question => question.uuid === uuid);
 }
 
@@ -28,11 +76,16 @@ function getNextQuestionAsync() {
   })
 }
 
-window.addEventListener('load', async function () {
+async function triggerNextQuesionAsync() {
   const questionUuid = await getNextQuestionAsync();
-  alert(questionUuid);
-  const question = await findQuestionByUuid(questionUuid);
+  const question = await findQuestionByUuidAsync(questionUuid);
   document.getElementById('question_phrase').innerText = question.phrase;
+  document.getElementById('question_uuid').value = question.uuid;
+}
+
+window.addEventListener('load', async function () {
+  await triggerNextQuesionAsync();
+
 })
 </script>
 </html>

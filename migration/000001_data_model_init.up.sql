@@ -1,5 +1,4 @@
 begin;
-/* cleared, unanswered, '<unanswered>', -7, passively_unanswered, actively_unanswered */
 CREATE TYPE entity_type AS ENUM ('user', 'group');
 
 
@@ -48,6 +47,33 @@ CREATE TABLE IF NOT EXISTS entity (
   type entity_type NOT NULL,
   pin VARCHAR (50) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS session_question (
+  uuid uuid PRIMARY KEY NOT NULL,
+  order_weight float NOT NULL,
+  audio_file VARCHAR (2048) NOT NULL,
+  audio_offset_begin double precision NULL,
+  audio_offset_end double precision NULL
+);
+
+CREATE TABLE IF NOT EXISTS session_answer (
+  uuid uuid PRIMARY KEY NOT NULL,
+  entity_id int NOT NULL,
+  question_uuid uuid NOT NULL
+);
+
+create function init_row_uuid_fn() returns trigger as $$
+begin
+    if new.uuid is NULL then
+        new.C1 := uuid6();
+    end if;
+    return new;
+end
+$$ language plpgsql;
+
+create trigger session_question_uuid_trigger before insert on session_question for each row execute procedure init_row_uuid_fn();
+create trigger session_answer_uuid_trigger before insert on session_answer for each row execute procedure init_row_uuid_fn();
+
 
 
 commit;

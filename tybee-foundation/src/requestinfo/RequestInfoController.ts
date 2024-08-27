@@ -33,7 +33,7 @@ export class RequestInfoController {
       const entityCount = Number(resultSet.rows[0].count);
       responseJsonBody["entityCount"] = entityCount;
       const authenticatedEntityId = this.authenticatedEntityProviderSvc.tryGetAlreadyAuthenticatedEntityId();
-      responseJsonBody["authenticatedEntityId"] = authenticatedEntityId || null;
+      responseJsonBody["authenticatedEntityId"] = authenticatedEntityId;
       if (authenticatedEntityId != null) {
         responseJsonBody["myNextQuestionUuid"] = await this.entityNextQuestionSvc.determinetNextQuestionId(authenticatedEntityId);
       }

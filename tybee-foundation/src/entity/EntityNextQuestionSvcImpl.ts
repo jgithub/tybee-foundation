@@ -9,6 +9,8 @@ export class EntityNextQuestionSvcImpl implements EntityNextQuestionSvc {
 
   
   public async determinetNextQuestionId(entityId: number): Promise<string /* uuid */> {
+    LOG.debug(`determinetNextQuestionId(): Entering with entityId = ${d4l(entityId)}`);
+
     const sql = `
 WITH ordered_questions AS (
   SELECT *
@@ -18,7 +20,7 @@ WITH ordered_questions AS (
 answered_questions AS (
   SELECT question_uuid
   FROM session_answer
-  WHERE entity_id = :user_id
+  WHERE entity_id = $1
 )
 SELECT oq.*
 FROM ordered_questions oq
@@ -35,9 +37,10 @@ LIMIT 1`;
       // Connect to the database
       await client.connect();
 
-      let resultSet = await client.query(sql)
+      let resultSet = await client.query(sql, [entityId]);
+      LOG.debug(`determinetNextQuestionId(): resultSet.rows = ${d4l(resultSet.rows)}`);
 
-      const questionUuid = resultSet.rows[0].question_uuid;
+      const questionUuid = resultSet.rows[0].uuid;
       return questionUuid
     } catch (err) {
       LOG.error(`determinetNextQuestionId(): Problem executing SQL.  err = ${d4l(err)}`);

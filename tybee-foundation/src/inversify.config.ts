@@ -7,6 +7,7 @@ import { UserSessionController } from "./user/UserSessionController";
 import { RouterBuilderSvcImpl } from "./route/RouterBuilderSvcImpl";
 import { RouterBuilderSvc } from "./route/RouterBuilderSvc";
 import { RequestInfoController } from "./requestinfo/RequestInfoController";
+import { PostgresConnectionProviderSvcImpl } from "./postgres/PostgresConnectionProviderSvcImpl";
 
 const container = new Container();
 // Lower order services ^^^^^^^
@@ -17,7 +18,9 @@ const dateProviderService: DateProviderService = {
 
 const sysConfigSvc: SysConfigSvc = new SysConfigSvcImpl();
 const userSessionController = new UserSessionController(sysConfigSvc);
-const requestInfoController = new RequestInfoController();
+const postgressConnectionProviderSvc = new PostgresConnectionProviderSvcImpl();
+
+const requestInfoController = new RequestInfoController(postgressConnectionProviderSvc);
 const routerBuilderSvc = new RouterBuilderSvcImpl(userSessionController, requestInfoController);
 
 // Higher Order Services vvvvvvvvv

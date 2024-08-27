@@ -1,21 +1,13 @@
 import { getLogger, d4l, JsonValue } from '@jgithub/ts-gist-pile';
-import { booleanUtil } from '@jgithub/ts-gist-pile';
-import pg from 'pg';
 import { Request, Response } from 'express';
+import { PostgresConnectionProviderSvc } from '../postgres/PostgresConnectionProviderSvc';
 
 export class RequestInfoController {
-  public async ri(req: Request, res: Response): Promise<void> {
-    // res.json({ dbReadTest: 'geek' });
+  constructor(private readonly postgressConnectionProviderSvc: PostgresConnectionProviderSvc) { }
 
+  public async ri(req: Request, res: Response): Promise<void> {
     // Create a new client instance with connection details
-    const client = new pg.Client({
-      host: process.env.PGHOST,
-      user: process.env.PGUSER,
-      password: process.env.PGPASSWORD,
-      database: process.env.PGDATABASE,
-      port: Number(process.env.PGPORT),
-      ssl: booleanUtil.isTruelike(process.env.PGSSL)
-    });
+    const client = this.postgressConnectionProviderSvc.getConnection();
 
     try {
 

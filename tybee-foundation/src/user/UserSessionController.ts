@@ -44,7 +44,6 @@ export class UserSessionController {
 
       LOG.info(`create(): Preparing to set ${TRANSPARENT_AUTH_TOKEN_COOKIE_NAME} cookie to = ${d4l(transparentAuthToken.toCompleteStringWithJitSha256Signature())}`)
 
-
       // Set cookie
       res.cookie(TRANSPARENT_AUTH_TOKEN_COOKIE_NAME, transparentAuthToken.toCompleteStringWithJitSha256Signature(), options)
       res.redirect(302, `${BASE_PATH}instructions`);

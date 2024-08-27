@@ -46,6 +46,15 @@ export class TransparentAuthToken implements TransparentAuthTokenAttr {
     return JSON.stringify(this.attr) === JSON.stringify(another.attr);
   }
 
+  public isValid(currentDate: Date): boolean {
+    const secondsSinceEpoch = Math.floor(currentDate.getTime() / 1000);
+    const isRecent: boolean = (secondsSinceEpoch - this.secondsSinceEpoch) < (60 * 60 * 6);
+    if (isRecent && this.generateJitSha256Signature() === this.sha256Signature) {
+      return true;
+    }
+    return false;
+  }
+
   public static parseFromString(str: string): TransparentAuthToken {
     const parts = str.split('.');
     return new TransparentAuthToken({

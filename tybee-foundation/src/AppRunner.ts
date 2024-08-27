@@ -11,6 +11,8 @@ import bodyParser from "body-parser";
 import { RouterBuilderSvc } from './route/RouterBuilderSvc';
 import { SysConfigSvc } from './sysconfig/SysConfigSvc';
 // import sassMiddleware from 'express-dart-sass';
+import { AsyncLocalStorage } from 'async_hooks'
+import cookieParser from 'cookie-parser';
 
 export class AppRunner {
   public async run(): Promise<boolean> {
@@ -26,9 +28,27 @@ export class AppRunner {
     
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
+    app.use(cookieParser());
     app.use(express.static('public'))
     app.set('view engine', 'ejs');
 
+
+
+    app.use((req, res, next) => {
+      LOG.debug(`run(): [middleware] Cookie processing with Entering with req = ${d4l(req)}`)
+      LOG.debug(`run(): req.cookies = ${d4l(req.cookies)}`)
+
+      const storage = new AsyncLocalStorage()
+
+      const store = {
+        authenticatedEntityId: 12345
+      }
+      storage.run(store, async () => {
+        /* Some API Logic here*/
+        next();
+      });
+    });
+    
     // app.use(express.json())
     
     // app.use(

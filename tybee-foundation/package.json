@@ -16,6 +16,7 @@
     "@eslint/js": "^9.9.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/chai": "^4.3.16",
+    "@types/cookie-parser": "^1.4.7",
     "@types/eslint__js": "^8.42.3",
     "@types/lodash.clonedeep": "^4.5.9",
     "@types/mocha": "^10.0.6",
@@ -38,6 +39,7 @@
   },
   "dependencies": {
     "@jgithub/ts-gist-pile": "jgithub/ts-gist-pile.git#v0.0.39",
+    "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",

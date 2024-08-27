@@ -12,6 +12,7 @@ import { EntityCrudSvcImpl } from "./entity/EntityCrudSvcImpl";
 import { AuthenticatedEntityProviderSvcImpl } from "./auth/AuthenticatedEntityProviderSvcImpl";
 import { QaSessionController } from "./qasession/QaSessionController";
 import { EntityNextQuestionSvcImpl } from "./entity/EntityNextQuestionSvcImpl";
+import { SessionQuestionReadSvcImpl } from "./qasession/SessionQuestionReadSvcImpl";
 
 const container = new Container();
 // Lower order services ^^^^^^^
@@ -25,7 +26,8 @@ const postgressConnectionProviderSvc = new PostgresConnectionProviderSvcImpl();
 const entityCrudSvc = new EntityCrudSvcImpl(postgressConnectionProviderSvc);
 const userSessionController = new UserSessionController(sysConfigSvc, entityCrudSvc, dateProviderService);
 const authenticatedEntityProviderSvc = new AuthenticatedEntityProviderSvcImpl();
-const qaSessionController = new QaSessionController(sysConfigSvc);
+const sessionQuestionsReadSvc = new SessionQuestionReadSvcImpl(postgressConnectionProviderSvc);
+const qaSessionController = new QaSessionController(sysConfigSvc, sessionQuestionsReadSvc);
 const entityNextQuestionSvc = new EntityNextQuestionSvcImpl(postgressConnectionProviderSvc);
 const requestInfoController = new RequestInfoController(postgressConnectionProviderSvc, authenticatedEntityProviderSvc, entityNextQuestionSvc);
 const routerBuilderSvc = new RouterBuilderSvcImpl(userSessionController, requestInfoController, qaSessionController);

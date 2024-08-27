@@ -8,6 +8,7 @@ import { RouterBuilderSvcImpl } from "./route/RouterBuilderSvcImpl";
 import { RouterBuilderSvc } from "./route/RouterBuilderSvc";
 import { RequestInfoController } from "./requestinfo/RequestInfoController";
 import { PostgresConnectionProviderSvcImpl } from "./postgres/PostgresConnectionProviderSvcImpl";
+import { EntityCrudSvcImpl } from "./entity/EntityCrudSvcImpl";
 
 const container = new Container();
 // Lower order services ^^^^^^^
@@ -17,8 +18,9 @@ const dateProviderService: DateProviderService = {
 }
 
 const sysConfigSvc: SysConfigSvc = new SysConfigSvcImpl();
-const userSessionController = new UserSessionController(sysConfigSvc);
 const postgressConnectionProviderSvc = new PostgresConnectionProviderSvcImpl();
+const entityCrudSvc = new EntityCrudSvcImpl(postgressConnectionProviderSvc);
+const userSessionController = new UserSessionController(sysConfigSvc, entityCrudSvc);
 
 const requestInfoController = new RequestInfoController(postgressConnectionProviderSvc);
 const routerBuilderSvc = new RouterBuilderSvcImpl(userSessionController, requestInfoController);

@@ -1,6 +1,7 @@
 import { getLogger, d4l, JsonValue } from '@jgithub/ts-gist-pile';
 import { Request, Response } from 'express';
 import { PostgresConnectionProviderSvc } from '../postgres/PostgresConnectionProviderSvc';
+const LOG = getLogger(`RequestInfoController`)
 
 export class RequestInfoController {
   constructor(private readonly postgressConnectionProviderSvc: PostgresConnectionProviderSvc) { }
@@ -27,7 +28,7 @@ export class RequestInfoController {
 
       res.json(responseJsonBody);
     } catch (err) {
-      console.error('Query error', err.stack);
+      LOG.error(`ri(): Problem executing SQL.  err = ${d4l(err)}`);
     }
     finally {
       // Close the connection

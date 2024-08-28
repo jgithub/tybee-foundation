@@ -1,16 +1,12 @@
 <%- include('../partials/header', {title: title}) %>
 
-<body>
-    <h1 id="question_phrase"></h1>
-    <form id="oneandonlyform" action="/answer/uploadMine" method="post" enctype="multipart/form-data">      
-      <input type="file" name="file" id="file" style="display: none"/>
-      <input type="hidden" id="question_uuid" name="question_uuid" required>
-    </form>
-    <button class="btn btn-primary" onclick="triggerNextQuesionAsync()">Next Question</button>
-</body>
 <script lang="javascript">
-  // Request access to the gMicrophone
-  let mediaRecorder;
+  let gRecordingInProgress = false;
+  let mediaRecorder = undefined;
+  
+  function requestAccessToMicrophone() {
+    console.log("requestAccessToMicrophone()");
+  
   navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
           mediaRecorder = new MediaRecorder(stream);
@@ -21,8 +17,16 @@
               audioChunks.push(event.data);
           };
 
+          mediaRecorder.onstart = () => {
+              console.log('Recording started');
+              gRecordingInProgress = true;
+              updateRecordingVisuals();
+          };
+
+          console.log('Preparing to start MediaRecorder...');
           // Start recording
           mediaRecorder.start();
+          updateRecordingVisuals();
 
           // Stop recording after 5 seconds (or use a stop button)
           // setTimeout(() => {
@@ -31,28 +35,32 @@
 
           // When the recording stops, process and upload the data
           mediaRecorder.onstop = () => {
-              const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-              const formData = new FormData();
-              formData.append('audio', audioBlob, 'recording.webm');
-              formData.append('question_uuid', document.getElementById('question_uuid').value);
+            gRecordingInProgress = false;
+            updateRecordingVisuals();
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'recording.webm');
+            formData.append('question_uuid', document.getElementById('question_uuid').value);
 
-              // Upload the audio file
-              fetch('/answer/uploadMine', {
-                  method: 'POST',
-                  body: formData
-              })
-              .then(response => response.json())
-              .then(data => {
-                  console.log('Upload success:', data);
-              })
-              .catch(error => {
-                  console.error('Upload failed:', error);
-              });
+            // Upload the audio file
+            fetch('/answer/uploadMine', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Upload success:', data);
+            })
+            .catch(error => {
+                console.error('Upload failed:', error);
+            });
           };
       })
       .catch(error => {
           console.error('Microphone access denied:', error);
-      });</script>
+      })
+  }
+</script>
 
 <script lang="Javascript">
 var gQaQuestions = <%- JSON.stringify(qaQuestions) %>;  
@@ -93,9 +101,38 @@ async function triggerNextQuesionAsync() {
   document.getElementById('question_uuid').value = question.uuid;
 }
 
+function updateRecordingVisuals() {
+  console.log(`updateRecordingVisuals()`);
+  if (gRecordingInProgress === true) {
+    document.getElementById('recording-true').style.display = 'block';
+    document.getElementById('recording-false').style.display = 'none';
+  } else {
+    document.getElementById('recording-true').style.display = 'none';
+    document.getElementById('recording-false').style.display = 'block';
+  }
+}
+
 window.addEventListener('load', async function () {
   await triggerNextQuesionAsync();
-
+  await requestAccessToMicrophone();
 })
 </script>
+
+
+<body>
+  <div id="recording-true" class="d-none">
+    <h1><span style="color: red">Recording...</span></h1>
+  </div>
+  <div id="recording-false" class="d-none">
+    <h1><span style="color: gray">Paused.</span></h1>
+  </div>
+  <h1 id="question_phrase"></h1>
+  <form id="oneandonlyform" action="/answer/uploadMine" method="post" enctype="multipart/form-data">      
+    <input type="file" name="file" id="file" style="display: none"/>
+    <input type="hidden" id="question_uuid" name="question_uuid" required>
+  </form>
+  <button class="btn btn-primary" onclick="triggerNextQuesionAsync()">Next Question</button>
+</body>
+
+
 </html>

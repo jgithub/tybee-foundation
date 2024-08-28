@@ -32,14 +32,25 @@ function getNextQuestionAsync() {
 // async function stopRecordingAndUploadAsync() {
 // }
 
-async function triggerNextQuesionAsync() {
-  if (mediaRecorder != null) {
+async function triggerNextQuesionAsync(doTriggerStopBool) {
+  if (doTriggerStopBool && mediaRecorder != null) {
     mediaRecorder.stop();
   }
 
   const questionUuid = await getNextQuestionAsync();
   const question = await findQuestionByUuidAsync(questionUuid);
   document.getElementById('question_phrase').innerText = question.phrase;
+  console.log(`triggerNextQuesionAsync(): question.audioFile = ${question.audioFile}`);
+  const audioFile = `<%= BASE_PATH %>audio/${question.audioFile}`
+  // const audioFile = question.audioFile;
+  console.log(`triggerNextQuesionAsync(): audioFile = ${audioFile}`);
+
+  try {
+    new Audio(audioFile).play();
+  } catch (err) {
+    console.error(`triggerNextQuesionAsync(): error playing audio: ${err}`);
+  }
+
   document.getElementById('question_uuid').value = question.uuid;
 }
 
@@ -94,8 +105,12 @@ function updateRecordingVisuals() {
 
             // Upload the audio file
             fetch('/answer/uploadMine', {
-                method: 'POST',
-                body: formData
+              // headers: {
+              //   'Accept': 'application/json',
+              //   // 'Content-Type': 'multipart/form-data'
+              // },
+              method: 'POST',
+              body: formData
             })
             .then(response => response.json())
             .then(data => {
@@ -112,7 +127,7 @@ function updateRecordingVisuals() {
 //  }
 
 window.addEventListener('load', async function () {
-  await triggerNextQuesionAsync();
+  await triggerNextQuesionAsync(false);
   // requestAccessToMicrophone();
 })
 </script>
@@ -130,7 +145,7 @@ window.addEventListener('load', async function () {
     <input type="file" name="file" id="file" style="display: none"/>
     <input type="hidden" id="question_uuid" name="question_uuid" required>
   </form>
-  <button class="btn btn-primary" onclick="triggerNextQuesionAsync()">Next Question</button>
+  <button class="btn btn-primary" onclick="triggerNextQuesionAsync(true)">Next Question</button>
 </body>
 
 

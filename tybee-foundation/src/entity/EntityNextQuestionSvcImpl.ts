@@ -15,7 +15,7 @@ export class EntityNextQuestionSvcImpl implements EntityNextQuestionSvc {
 WITH ordered_questions AS (
   SELECT *
   FROM qa_question
-  ORDER BY order_weight DESC
+  ORDER BY order_weight ASC
 ),
 answered_questions AS (
   SELECT question_uuid

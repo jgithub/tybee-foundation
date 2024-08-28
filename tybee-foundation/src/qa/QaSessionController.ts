@@ -19,4 +19,21 @@ export class QaSessionController {
   public async show(req: Request, res: Response): Promise<void> {
     res.render('qa/show', { ...this.sysConfigSvc.getControllerProps(), title: 'Hello, world!', qaQuestions: await this.qaQuestionReadSvc.getAllQuestions() });
   }
+
+  public async uploadMyAnswer(req: Request, res: Response): Promise<void> {
+    LOG.debug(`uploadMyAnswer(): Entering with req = ${d4l(req)}`)
+    
+    const theFilesObject: any = req?.files;
+    const theAudioArray: Array<any> = theFilesObject?.audio;
+    if (theAudioArray != null && theAudioArray[0] != null) {
+      LOG.debug(`uploadMyAnswer(): Entering with theAudioArray[0] = ${d4l(theAudioArray[0])}`)
+      const theFirstAudioObject = theAudioArray[0]
+
+      // Access the binary data of the uploaded file
+      // const fileBuffer = theFirstAudioObject.buffer;
+
+      // Example: Print the binary data (this will print a Buffer)
+      // console.log(fileBuffer);
+    }
+  }
 }

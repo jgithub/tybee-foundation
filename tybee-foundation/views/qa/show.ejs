@@ -9,7 +9,7 @@
     <button class="btn btn-primary" onclick="triggerNextQuesionAsync()">Next Question</button>
 </body>
 <script lang="javascript">
-  // Request access to the microphone
+  // Request access to the gMicrophone
   let mediaRecorder;
   navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {

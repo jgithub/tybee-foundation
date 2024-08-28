@@ -4,8 +4,58 @@
   let gRecordingInProgress = false;
   let mediaRecorder = undefined;
   
-  function requestAccessToMicrophone() {
-    console.log("requestAccessToMicrophone()");
+
+var gQaQuestions = <%- JSON.stringify(qaQuestions) %>;  
+
+async function findQuestionByUuidAsync(uuid) {
+  return gQaQuestions.find(question => question.uuid === uuid);
+}
+
+function getNextQuestionAsync() {
+  return new Promise((resolve, reject) => {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        // document.getElementById("demo").innerHTML =
+        // this.responseText;
+        // alert(this.responseText)
+        const jsonResponse = JSON.parse(this.responseText);
+        const questionUuid = jsonResponse.myNextQuestionUuid
+        resolve(questionUuid)
+      }
+    };
+    xhttp.open("GET", "/api/v1/ri", true);
+    xhttp.send();
+  })
+}
+
+// async function stopRecordingAndUploadAsync() {
+// }
+
+async function triggerNextQuesionAsync() {
+  if (mediaRecorder != null) {
+    mediaRecorder.stop();
+  }
+
+  const questionUuid = await getNextQuestionAsync();
+  const question = await findQuestionByUuidAsync(questionUuid);
+  document.getElementById('question_phrase').innerText = question.phrase;
+  document.getElementById('question_uuid').value = question.uuid;
+}
+
+function updateRecordingVisuals() {
+  console.log(`updateRecordingVisuals()`);
+  if (gRecordingInProgress === true) {
+    document.getElementById('recording-true').style.display = 'block';
+    document.getElementById('recording-false').style.display = 'none';
+  } else {
+    document.getElementById('recording-true').style.display = 'none';
+    document.getElementById('recording-false').style.display = 'block';
+  }
+}
+
+// function requestAccessToMicrophone() {
+//    console.log("requestAccessToMicrophone()");
   
   navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
@@ -59,71 +109,20 @@
       .catch(error => {
           console.error('Microphone access denied:', error);
       })
-  }
-</script>
-
-<script lang="Javascript">
-var gQaQuestions = <%- JSON.stringify(qaQuestions) %>;  
-
-async function findQuestionByUuidAsync(uuid) {
-  return gQaQuestions.find(question => question.uuid === uuid);
-}
-
-function getNextQuestionAsync() {
-  return new Promise((resolve, reject) => {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        // document.getElementById("demo").innerHTML =
-        // this.responseText;
-        // alert(this.responseText)
-        const jsonResponse = JSON.parse(this.responseText);
-        const questionUuid = jsonResponse.myNextQuestionUuid
-        resolve(questionUuid)
-      }
-    };
-    xhttp.open("GET", "/api/v1/ri", true);
-    xhttp.send();
-  })
-}
-
-// async function stopRecordingAndUploadAsync() {
-// }
-
-async function triggerNextQuesionAsync() {
-  if (mediaRecorder != null) {
-    mediaRecorder.stop();
-  }
-
-  const questionUuid = await getNextQuestionAsync();
-  const question = await findQuestionByUuidAsync(questionUuid);
-  document.getElementById('question_phrase').innerText = question.phrase;
-  document.getElementById('question_uuid').value = question.uuid;
-}
-
-function updateRecordingVisuals() {
-  console.log(`updateRecordingVisuals()`);
-  if (gRecordingInProgress === true) {
-    document.getElementById('recording-true').style.display = 'block';
-    document.getElementById('recording-false').style.display = 'none';
-  } else {
-    document.getElementById('recording-true').style.display = 'none';
-    document.getElementById('recording-false').style.display = 'block';
-  }
-}
+//  }
 
 window.addEventListener('load', async function () {
   await triggerNextQuesionAsync();
-  await requestAccessToMicrophone();
+  // requestAccessToMicrophone();
 })
 </script>
 
 
 <body>
-  <div id="recording-true" class="d-none">
+  <div id="recording-true" style="display: none;">
     <h1><span style="color: red">Recording...</span></h1>
   </div>
-  <div id="recording-false" class="d-none">
+  <div id="recording-false"  style="display: none;">
     <h1><span style="color: gray">Paused.</span></h1>
   </div>
   <h1 id="question_phrase"></h1>

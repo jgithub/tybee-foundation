@@ -16,23 +16,39 @@ Asymptotically moving in the direction of "perfect 80/20" for a web backend.  In
 * Typescript + Static typing 🎉
 * Makes use of ts-gist-pile 🎉
 * Leave in logging with d4l 🎉
-* Dependency injection (with inversify) 🎉
+* Dependency injection 🎉
 * Automated testing with mocha 🎉
+  * Mocha is good for tagging
+  * Mocha is good for grepping
 * linting 
 * Currently makes use of Inversify but NOT Reflect-metadata
-* Git LFS
+* Git LFS       
+* Postgres connectivity
+* Merge users + groups into entities
+* Dynamic server-generated HTML pages.   Like old-school Rails.
+* No APIs.  No SPA.
+* Twitter bootstrap
+* Express JS
+* Service oriented (but not microservices)
+* Program to an Interface
+* Design by contract
+* Migrations via Go - https://github.com/golang-migrate/migrate
+* v6 uuids
+* PG triggers
 
 ## TODO
 * tsx vs ts-node
-* twitter bootstrap
 * EJX vs next.js vs NestJS vs FoalTS vs Blitz.js
 * Lambda support
-* Server-generated HTML (like Rails)
-* ExpressJS?
 * GraphQL?
 * Talking to LLMs
 * Postgres
 * Service vs Svc
+* I18n
+
+## Wishlist
+* REPL
+* Migrations
 
 ## Prompts
 * Hey GPT... Awhat is the easiest way to render HTML with server side typescript?

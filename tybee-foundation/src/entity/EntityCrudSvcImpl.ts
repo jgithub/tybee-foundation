@@ -9,6 +9,18 @@ export class EntityCrudSvcImpl implements EntityCrudSvc{
   constructor(private readonly postgressConnectionProviderSvc: PostgresConnectionProviderSvc) { }
 
   
+  public async tryGetUserByIdAndPin(id: number, pin: string): Promise<Entity | undefined> {
+    try {
+      const entity = await this.getUserByIdAndPin(id, pin);
+      return entity
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        return undefined
+      }
+      return undefined
+    }
+  }
+
   public async getUserByIdAndPin(id: number, pin: string): Promise<Entity> {
     const client = this.postgressConnectionProviderSvc.getConnection();
 

@@ -6,17 +6,17 @@ const LOG = getLogger(`QaSessionController`)
 import { BASE_PATH, TRANSPARENT_AUTH_TOKEN_COOKIE_NAME } from "../constant";
 import { numberUtil } from '@jgithub/ts-gist-pile';
 import { TransparentAuthToken, TransparentAuthTokenAttr } from '../auth/TransparentAuthToken';
-import { SessionQuestionReadSvc } from './SessionQuestionReadSvc';
+import { QaQuestionReadSvc } from './QaQuestionReadSvc';
 
 
 export class QaSessionController {
   // private userService: UserService;
   constructor(
     private readonly sysConfigSvc: SysConfigSvc,
-    private readonly sessionQuestionReadSvc: SessionQuestionReadSvc
+    private readonly qaQuestionReadSvc: QaQuestionReadSvc
   ) { }
 
   public async show(req: Request, res: Response): Promise<void> {
-    res.render('qasession/show', { ...this.sysConfigSvc.getControllerProps(), title: 'Hello, world!', sessionQuestions: await this.sessionQuestionReadSvc.getAllQuestions() });
+    res.render('qa/show', { ...this.sysConfigSvc.getControllerProps(), title: 'Hello, world!', qaQuestions: await this.qaQuestionReadSvc.getAllQuestions() });
   }
 }

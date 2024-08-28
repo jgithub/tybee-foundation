@@ -1,4 +1,4 @@
-export interface SessionQuestion {
+export interface QaQuestion {
   uuid: string;
   phrase: string;
   orderWeight: number;

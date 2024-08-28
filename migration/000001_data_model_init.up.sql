@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS entity (
   pin VARCHAR (50) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS session_question (
+CREATE TABLE IF NOT EXISTS qa_question (
   uuid uuid PRIMARY KEY NOT NULL,
   phrase VARCHAR (2048) NOT NULL,
   order_weight float NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS session_question (
   audio_offset_end double precision NULL
 );
 
-CREATE TABLE IF NOT EXISTS session_answer (
+CREATE TABLE IF NOT EXISTS qa_answer (
   uuid uuid PRIMARY KEY NOT NULL,
   entity_id int NOT NULL,
   question_uuid uuid NOT NULL
@@ -72,8 +72,8 @@ begin
 end
 $$ language plpgsql;
 
-create trigger session_question_uuid_trigger before insert on session_question for each row execute procedure init_row_uuid_fn();
-create trigger session_answer_uuid_trigger before insert on session_answer for each row execute procedure init_row_uuid_fn();
+create trigger qa_question_uuid_trigger before insert on qa_question for each row execute procedure init_row_uuid_fn();
+create trigger qa_answer_uuid_trigger before insert on qa_answer for each row execute procedure init_row_uuid_fn();
 
 
 

@@ -1,13 +1,13 @@
 import { PostgresConnectionProviderSvc } from "../postgres/PostgresConnectionProviderSvc";
-import { SessionQuestion } from "./SessionQuestion";
-import { SessionQuestionReadSvc } from "./SessionQuestionReadSvc";
+import { QaQuestion } from "./QaQuestion";
+import { QaQuestionReadSvc } from "./QaQuestionReadSvc";
 import { getLogger, d4l } from '@jgithub/ts-gist-pile';
-const LOG = getLogger(`SessionQuestionReadSvcImpl`)
+const LOG = getLogger(`QaQuestionReadSvcImpl`)
 
-export class SessionQuestionReadSvcImpl implements SessionQuestionReadSvc {
+export class QaQuestionReadSvcImpl implements QaQuestionReadSvc {
   constructor(private readonly postgressConnectionProviderSvc: PostgresConnectionProviderSvc) { }
 
-  public async getAllQuestions(): Promise<SessionQuestion[]> {
+  public async getAllQuestions(): Promise<QaQuestion[]> {
     const client = this.postgressConnectionProviderSvc.getConnection();
 
     try {
@@ -15,16 +15,16 @@ export class SessionQuestionReadSvcImpl implements SessionQuestionReadSvc {
       // Connect to the database
       await client.connect();
 
-      let resultSet = await client.query("SELECT * FROM session_question ORDER BY order_weight DESC");
+      let resultSet = await client.query("SELECT * FROM qa_question ORDER BY order_weight DESC");
       LOG.debug(`determinetNextQuestionId(): resultSet.rows = ${d4l(resultSet.rows)}`);
 
-      const results: SessionQuestion[] = resultSet.rows.map(row => {
+      const results: QaQuestion[] = resultSet.rows.map(row => {
         return {
           uuid: row.uuid,
           orderWeight: row.order_weight,
           phrase: row.phrase,
           audioFile: row.audio_file,
-        } as SessionQuestion
+        } as QaQuestion
       });
 
       return results

@@ -3,7 +3,7 @@
 <body>
     <h1 id="question_phrase"></h1>
     <form id="oneandonlyform" action="/answer/uploadMine" method="post" enctype="multipart/form-data">      
-      <input type="file" name="file" id="file" />
+      <input type="file" name="file" id="file" style="display: none"/>
       <input type="hidden" id="question_uuid" name="question_uuid" required>
     </form>
     <button class="btn btn-primary" onclick="triggerNextQuesionAsync()">Next Question</button>
@@ -55,10 +55,10 @@
       });</script>
 
 <script lang="Javascript">
-var gSessionQuestions = <%- JSON.stringify(sessionQuestions) %>;  
+var gQaQuestions = <%- JSON.stringify(qaQuestions) %>;  
 
 async function findQuestionByUuidAsync(uuid) {
-  return gSessionQuestions.find(question => question.uuid === uuid);
+  return gQaQuestions.find(question => question.uuid === uuid);
 }
 
 function getNextQuestionAsync() {

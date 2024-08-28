@@ -22,7 +22,7 @@ Asymptotically moving in the direction of "perfect 80/20" for a web backend.  In
   * Mocha is good for grepping
 * linting 
 * Currently makes use of Inversify but NOT Reflect-metadata
-* Git LFS
+* Git LFS       
 * Postgres connectivity
 * Merge users + groups into entities
 * Dynamic server-generated HTML pages.   Like old-school Rails.
@@ -33,6 +33,8 @@ Asymptotically moving in the direction of "perfect 80/20" for a web backend.  In
 * Program to an Interface
 * Design by contract
 * Migrations via Go - https://github.com/golang-migrate/migrate
+* v6 uuids
+* PG triggers
 
 ## TODO
 * tsx vs ts-node
@@ -42,6 +44,7 @@ Asymptotically moving in the direction of "perfect 80/20" for a web backend.  In
 * Talking to LLMs
 * Postgres
 * Service vs Svc
+* I18n
 
 ## Wishlist
 * REPL

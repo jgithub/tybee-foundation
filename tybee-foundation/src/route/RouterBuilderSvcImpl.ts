@@ -13,6 +13,7 @@ export class RouterBuilderSvcImpl {
     const router: Router = Router();
     router.get('/user/session/new', this.userSessionController.new.bind(this.userSessionController));
     router.post('/user/session/create', this.userSessionController.create.bind(this.userSessionController));
+    router.get('/logout', this.userSessionController.delete.bind(this.userSessionController));
     router.get('/api/v1/ri', (req, res) => this.requestInfoController.ri(req, res));
     router.get('/qa', (req, res) => this.qaSessionController.show(req, res));
 

@@ -87,6 +87,11 @@ export class AppRunner {
 
 
     app.get(`${BASE_PATH}instructions`, (req, res) => {
+      if (authenticatedEntityProviderSvc.tryGetAlreadyAuthenticatedEntityId() == null) {
+        // NOT signed in
+        res.redirect(302, `${BASE_PATH}user/session/new`);
+        return;
+      } 
       res.render('instructions', { ...controllerProps, title: 'Hello, world!' });
     });
 

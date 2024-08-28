@@ -14,12 +14,12 @@ export class EntityNextQuestionSvcImpl implements EntityNextQuestionSvc {
     const sql = `
 WITH ordered_questions AS (
   SELECT *
-  FROM session_question
+  FROM qa_question
   ORDER BY order_weight DESC
 ),
 answered_questions AS (
   SELECT question_uuid
-  FROM session_answer
+  FROM qa_answer
   WHERE entity_id = $1
 )
 SELECT oq.*

@@ -16,6 +16,12 @@ export class UserSessionController {
     res.render('user/session/new', { ...this.sysConfigSvc.getControllerProps(), title: 'Hello, world!' });
   }
 
+  public async delete(req: Request, res: Response): Promise<void> {
+    LOG.debug(`delete(): Entering with req = ${d4l(req)}`)
+    res.clearCookie(TRANSPARENT_AUTH_TOKEN_COOKIE_NAME);
+    res.redirect(302, `${BASE_PATH}`);
+  }
+
   public async create(req: Request, res: Response): Promise<void> {
     LOG.debug(`create(): Entering with req = ${d4l(req)}`)
     LOG.debug(`create(): Entering with req.body = ${d4l(req.body)}`)
@@ -24,7 +30,7 @@ export class UserSessionController {
     const userId = numberUtil.tryAsNumber(req.body.username);
     const pin = req.body.password;
 
-    const entity = await this.entityCrudSvc.getUserByIdAndPin(userId as number, pin);
+    const entity = await this.entityCrudSvc.tryGetUserByIdAndPin(userId as number, pin);
     if (entity != null) {
       LOG.info(`create(): Found user entity = ${d4l(entity)}`)
 

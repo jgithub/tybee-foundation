@@ -2,16 +2,18 @@
 
 <body>
     <h1 id="question_phrase"></h1>
-    <form>
+    <form id="oneandonlyform" action="/answer/uploadMine" method="post" enctype="multipart/form-data">      
+      <input type="file" name="file" id="file" />
       <input type="hidden" id="question_uuid" name="question_uuid" required>
     </form>
     <button class="btn btn-primary" onclick="triggerNextQuesionAsync()">Next Question</button>
 </body>
 <script lang="javascript">
   // Request access to the microphone
+  let mediaRecorder;
   navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(stream => {
-          const mediaRecorder = new MediaRecorder(stream);
+        .then(stream => {
+          mediaRecorder = new MediaRecorder(stream);
           const audioChunks = [];
 
           // When data is available, store it in the audioChunks array
@@ -23,28 +25,29 @@
           mediaRecorder.start();
 
           // Stop recording after 5 seconds (or use a stop button)
-          setTimeout(() => {
-              mediaRecorder.stop();
-          }, 1000);
+          // setTimeout(() => {
+          //     mediaRecorder.stop();
+          // }, 2000);
 
           // When the recording stops, process and upload the data
           mediaRecorder.onstop = () => {
               const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
               const formData = new FormData();
               formData.append('audio', audioBlob, 'recording.webm');
+              formData.append('question_uuid', document.getElementById('question_uuid').value);
 
               // Upload the audio file
-              fetch('/upload', {
+              fetch('/answer/uploadMine', {
                   method: 'POST',
                   body: formData
               })
-                  .then(response => response.json())
-                  .then(data => {
-                      console.log('Upload success:', data);
-                  })
-                  .catch(error => {
-                      console.error('Upload failed:', error);
-                  });
+              .then(response => response.json())
+              .then(data => {
+                  console.log('Upload success:', data);
+              })
+              .catch(error => {
+                  console.error('Upload failed:', error);
+              });
           };
       })
       .catch(error => {
@@ -76,7 +79,14 @@ function getNextQuestionAsync() {
   })
 }
 
+// async function stopRecordingAndUploadAsync() {
+// }
+
 async function triggerNextQuesionAsync() {
+  if (mediaRecorder != null) {
+    mediaRecorder.stop();
+  }
+
   const questionUuid = await getNextQuestionAsync();
   const question = await findQuestionByUuidAsync(questionUuid);
   document.getElementById('question_phrase').innerText = question.phrase;

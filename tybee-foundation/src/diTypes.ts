@@ -8,6 +8,7 @@ const DI_TYPES = {
   UserSessionController: 'UserSessionController',
   RequestInfoController: 'RequestInfoController',
   RouterBuilderSvc: 'RouterBuilderSvc',
+  AuthenticatedEntityProviderSvc: 'AuthenticatedEntityProviderSvc',
 }
 
 export default DI_TYPES

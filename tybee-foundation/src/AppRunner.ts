@@ -16,6 +16,8 @@ import cookieParser from 'cookie-parser';
 import { TransparentAuthToken } from './auth/TransparentAuthToken';
 import { RequestContext } from './request/RequestContext';
 import { asyncLocalStorage } from './request/MyOnlyAsyncLocalStorage';
+import { AuthenticatedEntityProviderSvcImpl } from './auth/AuthenticatedEntityProviderSvcImpl';
+import { AuthenticatedEntityProviderSvc } from './auth/AuthenticatedEntityProviderSvc';
 
 export class AppRunner {
   public async run(): Promise<boolean> {
@@ -24,6 +26,7 @@ export class AppRunner {
     const dateProviderService = container.get<DateProviderService>(DI_TYPES.DateProviderService);
     LOG.debug(`run(): Time at the tone is ${d4l(dateProviderService.getNow())}`)
     const routerBuilderSvc = container.get<RouterBuilderSvc>(DI_TYPES.RouterBuilderSvc);
+    const authenticatedEntityProviderSvc = container.get<AuthenticatedEntityProviderSvc>(DI_TYPES.AuthenticatedEntityProviderSvc);
 
 
     const app: Express = express();
@@ -74,8 +77,14 @@ export class AppRunner {
     });
 
     app.get(`${BASE_PATH}`, (req: Request, res: Response) => {
-      res.redirect(302, `${BASE_PATH}user/session/new`);
+      if (authenticatedEntityProviderSvc.tryGetAlreadyAuthenticatedEntityId() == null) {
+        // NOT signed in
+        res.redirect(302, `${BASE_PATH}user/session/new`);
+      } else {
+        res.redirect(302, `${BASE_PATH}qasession`);
+      }
     });
+
 
     app.get(`${BASE_PATH}instructions`, (req, res) => {
       res.render('instructions', { ...controllerProps, title: 'Hello, world!' });

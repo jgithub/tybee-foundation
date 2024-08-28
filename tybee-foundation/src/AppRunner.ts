@@ -67,7 +67,7 @@ export class AppRunner {
       BASE_PATH: BASE_PATH
     }
 
-    const router = routerBuilderSvc.build();
+    const router = routerBuilderSvc.build(app);
     app.use(`${BASE_PATH}`, router);
 
     // TODO: Move this to routing definition

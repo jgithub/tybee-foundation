@@ -15,7 +15,7 @@ export class QaQuestionReadSvcImpl implements QaQuestionReadSvc {
       // Connect to the database
       await client.connect();
 
-      let resultSet = await client.query("SELECT * FROM qa_question ORDER BY order_weight DESC");
+      let resultSet = await client.query("SELECT * FROM qa_question ORDER BY order_weight ASC");
       LOG.debug(`determinetNextQuestionId(): resultSet.rows = ${d4l(resultSet.rows)}`);
 
       const results: QaQuestion[] = resultSet.rows.map(row => {

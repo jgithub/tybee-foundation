@@ -3,7 +3,9 @@ import { UserSessionController } from '../user/UserSessionController';
 import { RequestInfoController } from '../requestinfo/RequestInfoController';
 import { QaSessionController } from '../qa/QaSessionController';
 import multer from 'multer';
-const upload = multer({ dest: '/tmp/audioUploads' })
+import { AUDIO_UPLOAD_DIR } from '../constant';
+
+const upload = multer({ dest: AUDIO_UPLOAD_DIR })
 
 export class RouterBuilderSvcImpl {
   constructor(

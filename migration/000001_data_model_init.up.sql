@@ -45,7 +45,8 @@ end $$ language plpgsql;
 CREATE TABLE IF NOT EXISTS entity (
   id serial PRIMARY KEY,
   type entity_type NOT NULL,
-  pin VARCHAR (50) NOT NULL
+  pin VARCHAR (50) NOT NULL,
+	comment VARCHAR (2048) NULL
 );
 
 CREATE TABLE IF NOT EXISTS qa_question (

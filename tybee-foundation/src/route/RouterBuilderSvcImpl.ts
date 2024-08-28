@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { UserSessionController } from '../user/UserSessionController';
 import { RequestInfoController } from '../requestinfo/RequestInfoController';
-import { QaSessionController } from '../qasession/QaSessionController';
+import { QaSessionController } from '../qa/QaSessionController';
 
 export class RouterBuilderSvcImpl {
   constructor(
@@ -14,7 +14,7 @@ export class RouterBuilderSvcImpl {
     router.get('/user/session/new', this.userSessionController.new.bind(this.userSessionController));
     router.post('/user/session/create', this.userSessionController.create.bind(this.userSessionController));
     router.get('/api/v1/ri', (req, res) => this.requestInfoController.ri(req, res));
-    router.get('/qasession', (req, res) => this.qaSessionController.show(req, res));
+    router.get('/qa', (req, res) => this.qaSessionController.show(req, res));
 
     return router;
   }

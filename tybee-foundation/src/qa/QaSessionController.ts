@@ -17,6 +17,6 @@ export class QaSessionController {
   ) { }
 
   public async show(req: Request, res: Response): Promise<void> {
-    res.render('qasession/show', { ...this.sysConfigSvc.getControllerProps(), title: 'Hello, world!', sessionQuestions: await this.sessionQuestionReadSvc.getAllQuestions() });
+    res.render('qa/show', { ...this.sysConfigSvc.getControllerProps(), title: 'Hello, world!', sessionQuestions: await this.sessionQuestionReadSvc.getAllQuestions() });
   }
 }

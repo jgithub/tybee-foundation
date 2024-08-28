@@ -10,9 +10,9 @@ import { RequestInfoController } from "./requestinfo/RequestInfoController";
 import { PostgresConnectionProviderSvcImpl } from "./postgres/PostgresConnectionProviderSvcImpl";
 import { EntityCrudSvcImpl } from "./entity/EntityCrudSvcImpl";
 import { AuthenticatedEntityProviderSvcImpl } from "./auth/AuthenticatedEntityProviderSvcImpl";
-import { QaSessionController } from "./qasession/QaSessionController";
+import { QaSessionController } from "./qa/QaSessionController";
 import { EntityNextQuestionSvcImpl } from "./entity/EntityNextQuestionSvcImpl";
-import { SessionQuestionReadSvcImpl } from "./qasession/SessionQuestionReadSvcImpl";
+import { SessionQuestionReadSvcImpl } from "./qa/SessionQuestionReadSvcImpl";
 import { AuthenticatedEntityProviderSvc } from "./auth/AuthenticatedEntityProviderSvc";
 
 const container = new Container();

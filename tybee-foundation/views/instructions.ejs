@@ -21,7 +21,7 @@
         </div>
 
         <div>
-            <button class="btn btn-primary" onclick="window.location.href='<%= BASE_PATH %>qasession'">Jump to Questions</button>
+            <button class="btn btn-primary" onclick="window.location.href='<%= BASE_PATH %>qa'">Speak volume and microphone levels look good.  Start the Q&A session</button>
         </div>
     </div>
 </body>
@@ -46,18 +46,18 @@ function startTestingMicrophoneLevels() {
         scriptProcessor.connect(audioContext.destination);
         
         scriptProcessor.onaudioprocess = () => {
-        const array = new Uint8Array(analyser.frequencyBinCount);
-        analyser.getByteFrequencyData(array);
+            const array = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(array);
 
-        let values = 0;
-        const length = array.length;
-        for (let ii = 0; ii < length; ii++) {
-            values += array[ii];
-        }
+            let values = 0;
+            const length = array.length;
+            for (let ii = 0; ii < length; ii++) {
+                values += array[ii];
+            }
 
-        const averageMicLevel = values / length;
-        // console.log('Average microphone level: ' + averageMicLevel);
-        document.getElementById('averageMicLevel').style.width = (averageMicLevel * 2.5)+ '%';
+            const averageMicLevel = values / length;
+            // console.log('Average microphone level: ' + averageMicLevel);
+            document.getElementById('averageMicLevel').style.width = (averageMicLevel * 2.5)+ '%';
         };
     })
     .catch(err => {

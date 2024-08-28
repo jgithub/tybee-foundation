@@ -81,7 +81,7 @@ export class AppRunner {
         // NOT signed in
         res.redirect(302, `${BASE_PATH}user/session/new`);
       } else {
-        res.redirect(302, `${BASE_PATH}qa`);
+        res.redirect(302, `${BASE_PATH}instructions`);
       }
     });
 

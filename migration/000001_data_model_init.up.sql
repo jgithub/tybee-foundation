@@ -42,6 +42,35 @@ begin
 end $$ language plpgsql;
 
 
+create or replace function uuid7() returns uuid as $$
+declare
+    v_timestamp bigint := null;
+    v_random_bits bigint := null;
+
+    v_timestamp_hex varchar := null;
+    v_random_bits_hex_a varchar := null;
+    v_random_bits_hex_b varchar := null;
+
+    c_version bigint := x'0000000000007000'::bigint; -- Version 7 UUID (b'0111...')
+    c_variant bigint := x'8000000000000000'::bigint; -- Variant: b'10xx...'
+
+begin
+    -- Get current timestamp in milliseconds since Unix epoch
+    v_timestamp := trunc(extract(epoch from clock_timestamp()) * 1000);
+
+    -- Generate random bits
+    v_random_bits := trunc(random() * 2^32)::bigint << 32 | trunc(random() * 2^32)::bigint;
+
+    -- Convert timestamp and random bits to hexadecimal and format the UUID
+    v_timestamp_hex := lpad(to_hex(v_timestamp), 12, '0');
+    v_random_bits_hex_a := lpad(to_hex(v_random_bits >> 16), 8, '0');
+    v_random_bits_hex_b := lpad(to_hex((v_random_bits & 65535) | c_variant), 4, '0');
+
+    return (v_timestamp_hex || v_random_bits_hex_a || v_random_bits_hex_b)::uuid;
+end $$ language plpgsql;
+
+
+
 CREATE TABLE IF NOT EXISTS entity (
   id serial PRIMARY KEY,
   type entity_type NOT NULL,
@@ -74,7 +103,7 @@ CREATE INDEX IF NOT EXISTS qa_answer_question_uuid_idx ON qa_answer(qa_question_
 create function populate_row_uuid() returns trigger as $$
 begin
     if new.uuid is NULL then
-        new.uuid := uuid6();
+        new.uuid := uuid7();
     end if;
     return new;
 end

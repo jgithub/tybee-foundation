@@ -12,21 +12,21 @@ export class EntityNextQuestionSvcImpl implements EntityNextQuestionSvc {
     LOG.debug(`determinetNextQuestionId(): Entering with entityId = ${d4l(entityId)}`);
 
     const sql = `
-WITH ordered_questions AS (
+WITH questions AS (
   SELECT *
   FROM qa_question
-  ORDER BY order_weight ASC
+  ORDER BY sequence ASC
 ),
-answered_questions AS (
-  SELECT question_uuid
+answers AS (
+  SELECT uuid, qa_question_uuid
   FROM qa_answer
   WHERE entity_id = $1
 )
-SELECT oq.*
-FROM ordered_questions oq
-LEFT JOIN answered_questions aq
-ON oq.uuid = aq.question_uuid
-WHERE aq.question_uuid IS NULL
+SELECT q.*
+FROM questions q
+LEFT JOIN answers a
+ON q.uuid = a.qa_question_uuid
+WHERE a.qa_question_uuid IS NULL
 LIMIT 1`;
   
     // Create a new client instance with connection details

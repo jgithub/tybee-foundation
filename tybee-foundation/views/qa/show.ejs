@@ -1,6 +1,14 @@
 <%- include('../partials/header', {title: title}) %>
 
+<script src="https://open-browser-js.s3.us-east-2.amazonaws.com/TsGistPile.js"></script>
+
 <script lang="javascript">
+  TsGistPile.LOG_TRACE = true;
+  TsGistPile.LOG_DEBUG = true;
+  TsGistPile.LOG_INFO = true;
+  const LOG = TsGistPile.LoggerFactory.getLogger("show.ejs");
+  LOG.debug("This is a debug message");
+
   let gRecordingInProgress = false;
   let mediaRecorder = undefined;
   
@@ -173,7 +181,7 @@ async function populateTheNextQuestion() /* Promise<boolean> */ {
     .catch(error => {
         console.error('Microphone access denied:', error);
     })
-    
+
 //  }
 
 window.addEventListener('load', async function () {

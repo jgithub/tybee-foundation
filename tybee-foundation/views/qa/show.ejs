@@ -33,6 +33,7 @@ async function stopRecordingAndSubmit() {
   if (mediaRecorder != null) {
     console.log(`stopRecordingAndSubmit(): Stopping mediaRecorder...`);
     mediaRecorder.stop();
+    console.log(`stopRecordingAndSubmit(): mediaRecorder stopped.`);
   } else {
     console.log(`stopRecordingAndSubmit(): No mediaRecorder to stop.`);
   }
@@ -79,6 +80,7 @@ function updateRecordingVisuals() {
 
 async function populateTheNextQuestion() /* Promise<boolean> */ {
   console.log(`populateTheNextQuestion(): Entering`);
+  mediaRecorder.start()
   const questionUuid = await getNextQuestionAsync();
   const question = await findQuestionByUuidAsync(questionUuid);
   if (question != null) {
@@ -109,8 +111,12 @@ async function populateTheNextQuestion() /* Promise<boolean> */ {
 // function requestAccessToMicrophone() {
 //    console.log("requestAccessToMicrophone()");
   
+  console.log(`Preparing to initialize MediaRecorder...`);
+
   navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
+          console.log(`Now instantiating MediaRecorder...`);
+
           mediaRecorder = new MediaRecorder(stream);
           const audioChunks = [];
 
@@ -126,8 +132,8 @@ async function populateTheNextQuestion() /* Promise<boolean> */ {
           };
 
           console.log('Preparing to start MediaRecorder...');
-          // Start recording
-          mediaRecorder.start();
+          // Auto-Start recording
+          // mediaRecorder.start();
           updateRecordingVisuals();
 
           // Stop recording after 5 seconds (or use a stop button)
@@ -172,7 +178,9 @@ async function populateTheNextQuestion() /* Promise<boolean> */ {
 
 window.addEventListener('load', async function () {
   // await triggerNextQuesionAsync(false);
-  await populateTheNextQuestion();
+  setTimeout( async () => {
+    await populateTheNextQuestion();
+  }, 700);
   // requestAccessToMicrophone();
 })
 </script>

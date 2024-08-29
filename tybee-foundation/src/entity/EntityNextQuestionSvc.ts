@@ -1,3 +1,3 @@
 export interface EntityNextQuestionSvc {
-  determinetNextQuestionId(entityId: number): Promise<string /* uuid */>;
+  determineNextQuestionId(entityId: number): Promise<string /* uuid */>;
 }

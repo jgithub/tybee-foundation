@@ -4,6 +4,7 @@ import { AuthenticatedEntityProviderSvc } from '../auth/AuthenticatedEntityProvi
 import { JsonObject } from '@jgithub/ts-gist-pile/dist/json/JsonObject';
 import { getLogger, d4l } from '@jgithub/ts-gist-pile';
 import { EntityNextQuestionSvc } from '../entity/EntityNextQuestionSvc';
+import { TRANSPARENT_AUTH_TOKEN_COOKIE_NAME } from '../constant';
 const LOG = getLogger(`RequestInfoController`)
 
 export class RequestInfoController {
@@ -35,8 +36,11 @@ export class RequestInfoController {
       const authenticatedEntityId = this.authenticatedEntityProviderSvc.tryGetAlreadyAuthenticatedEntityId();
       responseJsonBody["authenticatedEntityId"] = authenticatedEntityId;
       if (authenticatedEntityId != null) {
-        responseJsonBody["myNextQuestionUuid"] = await this.entityNextQuestionSvc.determinetNextQuestionId(authenticatedEntityId);
+        responseJsonBody["myNextQuestionUuid"] = await this.entityNextQuestionSvc.determineNextQuestionId(authenticatedEntityId);
       }
+      const denormalizedCookieValue = req.cookies[TRANSPARENT_AUTH_TOKEN_COOKIE_NAME]
+      responseJsonBody[`COOKIE_${TRANSPARENT_AUTH_TOKEN_COOKIE_NAME}`] = denormalizedCookieValue;
+
       res.json(responseJsonBody);
     } catch (err) {
       LOG.error(`ri(): Problem executing SQL.  err = ${d4l(err)}`);

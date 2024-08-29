@@ -6,6 +6,7 @@ const LOG = getLogger(`UserSessionController`)
 import { BASE_PATH, TRANSPARENT_AUTH_TOKEN_COOKIE_NAME } from "../constant";
 import { numberUtil } from '@jgithub/ts-gist-pile';
 import { TransparentAuthToken, TransparentAuthTokenAttr } from '../auth/TransparentAuthToken';
+import { Entity } from '../entity/Entity';
 
 
 export class UserSessionController {
@@ -30,13 +31,13 @@ export class UserSessionController {
     const userId = numberUtil.tryAsNumber(req.body.username);
     const pin = req.body.password;
 
-    const entity = await this.entityCrudSvc.tryGetUserByIdAndPin(userId as number, pin);
+    const entity: Entity | undefined = await this.entityCrudSvc.tryGetUserByIdAndPin(userId as number, pin);
     if (entity != null) {
       LOG.info(`create(): Found user entity = ${d4l(entity)}`)
 
       const secondsSinceEpoch = Math.floor(this.dateProviderService.getNow().getTime() / 1000);
       const transparentAuthTokenAttr: TransparentAuthTokenAttr = {
-        userId: 1,
+        userId: entity.id,
         secondsSinceEpoch: secondsSinceEpoch
       } as TransparentAuthTokenAttr;
       const transparentAuthToken: TransparentAuthToken = new TransparentAuthToken(transparentAuthTokenAttr)

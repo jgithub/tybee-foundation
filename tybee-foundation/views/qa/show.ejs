@@ -1,6 +1,14 @@
 <%- include('../partials/header', {title: title}) %>
 
+<script src="https://open-browser-js.s3.us-east-2.amazonaws.com/TsGistPile.js"></script>
+
 <script lang="javascript">
+  TsGistPile.LOG_TRACE = true;
+  TsGistPile.LOG_DEBUG = true;
+  TsGistPile.LOG_INFO = true;
+  const LOG = TsGistPile.LoggerFactory.getLogger("show.ejs");
+  LOG.debug("This is a debug message");
+
   let gRecordingInProgress = false;
   let mediaRecorder = undefined;
   
@@ -29,38 +37,19 @@ function getNextQuestionAsync() {
   })
 }
 
-// async function stopRecordingAndUploadAsync() {
-// }
-
-async function triggerNextQuesionAsync(doTriggerStopBool) {
-  if (doTriggerStopBool && mediaRecorder != null) {
+async function stopRecordingAndSubmit() {
+  if (mediaRecorder != null) {
+    LOG.debug(`stopRecordingAndSubmit(): Stopping mediaRecorder...`);
     mediaRecorder.stop();
+    LOG.debug(`stopRecordingAndSubmit(): mediaRecorder stopped.`);
+  } else {
+    LOG.debug(`stopRecordingAndSubmit(): No mediaRecorder to stop.`);
   }
-
-  setTimeout(async () => {
-    // After a second or so the upload should have finished
-    // TODO: make this less hacky
-
-    const questionUuid = await getNextQuestionAsync();
-    const question = await findQuestionByUuidAsync(questionUuid);
-    document.getElementById('question_phrase').innerText = question.phrase;
-    console.log(`triggerNextQuesionAsync(): question.audioFile = ${question.audioFile}`);
-    const audioFile = `<%= BASE_PATH %>audio/${question.audioFile}`
-    // const audioFile = question.audioFile;
-    console.log(`triggerNextQuesionAsync(): audioFile = ${audioFile}`);
-
-    try {
-      new Audio(audioFile).play();
-    } catch (err) {
-      console.error(`triggerNextQuesionAsync(): error playing audio: ${err}`);
-    }
-
-    document.getElementById('question_uuid').value = question.uuid;    
-  }, 1500);
 }
 
+
 function updateRecordingVisuals() {
-  console.log(`updateRecordingVisuals()`);
+  LOG.debug(`updateRecordingVisuals()`);
   if (gRecordingInProgress === true) {
     document.getElementById('recording-true').style.display = 'block';
     document.getElementById('recording-false').style.display = 'none';
@@ -70,87 +59,121 @@ function updateRecordingVisuals() {
   }
 }
 
-// function requestAccessToMicrophone() {
-//    console.log("requestAccessToMicrophone()");
-  
+async function populateTheNextQuestion() /* Promise<boolean> */ {
+  LOG.debug(`populateTheNextQuestion(): Entering`);
+  mediaRecorder.start()
+  const questionUuid = await getNextQuestionAsync();
+  const question = await findQuestionByUuidAsync(questionUuid);
+  if (question != null) {
+    document.getElementById('question_phrase').innerText = question.phrase;
+    LOG.debug(`populateTheNextQuestion(): question.audioFile = ${question.audioFile}`);
+    const audioFile = `<%= BASE_PATH %>audio/${question.audioFile}`
+    // const audioFile = question.audioFile;
+    LOG.debug(`populateTheNextQuestion(): audioFile = ${audioFile}`);
+
+    try {
+      LOG.debug(`populateTheNextQuestion(): Will attempt to play audioFile = ${audioFile}...`);
+      await new Audio(audioFile).play();
+    } catch (err) {
+      LOG.debug(`populateTheNextQuestion(): warning.  Not playing audioFile = ${audioFile} due to err: ${err}`);
+    }
+
+    document.getElementById('question_uuid').value = question.uuid; 
+    return true
+  } else {
+    document.getElementById('question_phrase').innerText = "";
+    document.getElementById('question_uuid').value = "";
+    window.location.assign("/thanks")
+    return false
+  }
+}
+
+
+  LOG.debug(`Preparing to initialize MediaRecorder...`);
+
   navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-          mediaRecorder = new MediaRecorder(stream);
-          const audioChunks = [];
+    .then(stream => {
+      LOG.debug(`Now instantiating MediaRecorder...`);
 
-          // When data is available, store it in the audioChunks array
-          mediaRecorder.ondataavailable = event => {
-              audioChunks.push(event.data);
-          };
+      mediaRecorder = new MediaRecorder(stream);
+      const audioChunks = [];
 
-          mediaRecorder.onstart = () => {
-              console.log('Recording started');
-              gRecordingInProgress = true;
-              updateRecordingVisuals();
-          };
+      // When data is available, store it in the audioChunks array
+      mediaRecorder.ondataavailable = event => {
+          audioChunks.push(event.data);
+      };
 
-          console.log('Preparing to start MediaRecorder...');
-          // Start recording
-          mediaRecorder.start();
+      mediaRecorder.onstart = () => {
+          LOG.debug('Recording started');
+          gRecordingInProgress = true;
           updateRecordingVisuals();
+      };
 
-          // Stop recording after 5 seconds (or use a stop button)
-          // setTimeout(() => {
-          //     mediaRecorder.stop();
-          // }, 2000);
+      LOG.debug('Preparing to start MediaRecorder...');
+      // Auto-Start recording
+      // mediaRecorder.start();
+      updateRecordingVisuals();
 
-          // When the recording stops, process and upload the data
-          mediaRecorder.onstop = () => {
-            gRecordingInProgress = false;
-            updateRecordingVisuals();
-            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-            const formData = new FormData();
-            formData.append('audio', audioBlob, 'recording.webm');
-            formData.append('question_uuid', document.getElementById('question_uuid').value);
+      // Stop recording after 5 seconds (or use a stop button)
+      // setTimeout(() => {
+      //     mediaRecorder.stop();
+      // }, 2000);
 
-            // Upload the audio file
-            fetch('/answer/uploadMine', {
-              // headers: {
-              //   'Accept': 'application/json',
-              //   // 'Content-Type': 'multipart/form-data'
-              // },
-              method: 'POST',
-              body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Upload success:', data);
-            })
-            .catch(error => {
-                console.error('Upload failed:', error);
-            });
-          };
-      })
-      .catch(error => {
-          console.error('Microphone access denied:', error);
-      })
-//  }
+      // When the recording stops, process and upload the data
+      mediaRecorder.onstop = async () => {
+        LOG.debug('In the callback handler for mediaRecorder.onstop()...');
+
+        gRecordingInProgress = false;
+        updateRecordingVisuals();
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'recording.webm');
+        formData.append('question_uuid', document.getElementById('question_uuid').value);
+
+        try {
+          LOG.debug('POSTing audio to /answer/uploadMine...');
+          // Upload the audio file
+          const response = await fetch('/answer/uploadMine', {
+            // headers: {
+            //   'Accept': 'application/json',
+            //   // 'Content-Type': 'multipart/form-data'
+            // },
+            method: 'POST',
+            body: formData
+          })
+          const responseJson = await response.json();
+          LOG.debug(`Upload success.  responseJson = ${JSON.stringify(responseJson)}`);
+          await populateTheNextQuestion(); 
+        } catch(err) {
+          console.error('Upload failed:', err);
+        }
+      };
+    })
+    .catch(error => {
+        console.error('Microphone access denied:', error);
+    })
 
 window.addEventListener('load', async function () {
-  await triggerNextQuesionAsync(false);
-  // requestAccessToMicrophone();
+  setTimeout( async () => {
+    await populateTheNextQuestion();
+  }, 700);
 })
 </script>
 
 
 <body>
   <div id="recording-true" style="display: none;">
-    <h1><span style="color: red">Recording...</span></h1>
+    <div style="text-align: center;"><span style="color: red">&bull;</span> Recording...</div>
   </div>
   <div id="recording-false"  style="display: none;">
-    <h1><span style="color: gray">Paused.</span></h1>
+    <div style="text-align: center;"><span style="color: gray">Paused.</span></div>
   </div>
   <h1 id="question_phrase"></h1>
   <form id="oneandonlyform" action="/answer/uploadMine" method="post" enctype="multipart/form-data">      
     <input type="file" name="file" id="file" style="display: none"/>
     <input type="hidden" id="question_uuid" name="question_uuid" required>
   </form>
-  <button class="btn btn-primary" onclick="triggerNextQuesionAsync(true)">Submit and Continue</button>
+  <button class="btn btn-primary" onclick="stopRecordingAndSubmit()">Submit and Continue</button>
 </body>
 
 

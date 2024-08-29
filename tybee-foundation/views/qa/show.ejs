@@ -37,21 +37,26 @@ async function triggerNextQuesionAsync(doTriggerStopBool) {
     mediaRecorder.stop();
   }
 
-  const questionUuid = await getNextQuestionAsync();
-  const question = await findQuestionByUuidAsync(questionUuid);
-  document.getElementById('question_phrase').innerText = question.phrase;
-  console.log(`triggerNextQuesionAsync(): question.audioFile = ${question.audioFile}`);
-  const audioFile = `<%= BASE_PATH %>audio/${question.audioFile}`
-  // const audioFile = question.audioFile;
-  console.log(`triggerNextQuesionAsync(): audioFile = ${audioFile}`);
+  setTimeout(async () => {
+    // After a second or so the upload should have finished
+    // TODO: make this less hacky
 
-  try {
-    new Audio(audioFile).play();
-  } catch (err) {
-    console.error(`triggerNextQuesionAsync(): error playing audio: ${err}`);
-  }
+    const questionUuid = await getNextQuestionAsync();
+    const question = await findQuestionByUuidAsync(questionUuid);
+    document.getElementById('question_phrase').innerText = question.phrase;
+    console.log(`triggerNextQuesionAsync(): question.audioFile = ${question.audioFile}`);
+    const audioFile = `<%= BASE_PATH %>audio/${question.audioFile}`
+    // const audioFile = question.audioFile;
+    console.log(`triggerNextQuesionAsync(): audioFile = ${audioFile}`);
 
-  document.getElementById('question_uuid').value = question.uuid;
+    try {
+      new Audio(audioFile).play();
+    } catch (err) {
+      console.error(`triggerNextQuesionAsync(): error playing audio: ${err}`);
+    }
+
+    document.getElementById('question_uuid').value = question.uuid;    
+  }, 1500);
 }
 
 function updateRecordingVisuals() {
@@ -145,7 +150,7 @@ window.addEventListener('load', async function () {
     <input type="file" name="file" id="file" style="display: none"/>
     <input type="hidden" id="question_uuid" name="question_uuid" required>
   </form>
-  <button class="btn btn-primary" onclick="triggerNextQuesionAsync(true)">Next Question</button>
+  <button class="btn btn-primary" onclick="triggerNextQuesionAsync(true)">Submit and Continue</button>
 </body>
 
 

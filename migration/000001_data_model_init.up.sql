@@ -50,21 +50,28 @@ CREATE TABLE IF NOT EXISTS entity (
 );
 
 CREATE TABLE IF NOT EXISTS qa_question (
+	-- TODO: naming uuid, vs qa_question_id, vs qa_question_uuid
   uuid uuid PRIMARY KEY NOT NULL,
   phrase VARCHAR (2048) NOT NULL,
-  order_weight float NOT NULL,
+  sequence float NOT NULL,
   audio_file VARCHAR (2048) NOT NULL,
   audio_offset_begin double precision NULL,
   audio_offset_end double precision NULL
 );
+CREATE UNIQUE INDEX IF NOT EXISTS qa_question_sequence_idx ON qa_question(sequence);
+
 
 CREATE TABLE IF NOT EXISTS qa_answer (
   uuid uuid PRIMARY KEY NOT NULL,
   entity_id int NOT NULL,
-  question_uuid uuid NOT NULL
+  qa_question_uuid uuid NOT NULL,
+	reported_begin_at timestamp NULL,
+	reported_end_at timestamp NULL,
+	created_at timestamp NOT NULL 
 );
+CREATE INDEX IF NOT EXISTS qa_answer_question_uuid_idx ON qa_answer(qa_question_uuid);
 
-create function init_row_uuid_fn() returns trigger as $$
+create function populate_row_uuid() returns trigger as $$
 begin
     if new.uuid is NULL then
         new.uuid := uuid6();
@@ -73,9 +80,17 @@ begin
 end
 $$ language plpgsql;
 
-create trigger qa_question_uuid_trigger before insert on qa_question for each row execute procedure init_row_uuid_fn();
-create trigger qa_answer_uuid_trigger before insert on qa_answer for each row execute procedure init_row_uuid_fn();
+create trigger qa_question_uuid_trigger before insert on qa_question for each row execute procedure populate_row_uuid();
+create trigger qa_answer_uuid_trigger before insert on qa_answer for each row execute procedure populate_row_uuid();
 
+create function populate_row_created_at() returns trigger as $$
+begin
+    new.created_at := now();
+    return new;
+end
+$$ language plpgsql;
+
+create trigger qa_answer_created_at_trigger before insert on qa_answer for each row execute procedure populate_row_created_at();
 
 
 commit;

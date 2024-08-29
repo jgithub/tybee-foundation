@@ -103,7 +103,7 @@ CREATE INDEX IF NOT EXISTS qa_answer_question_uuid_idx ON qa_answer(qa_question_
 create function populate_row_uuid() returns trigger as $$
 begin
     if new.uuid is NULL then
-        new.uuid := uuid7();
+        new.uuid := uuid6();
     end if;
     return new;
 end

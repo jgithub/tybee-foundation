@@ -1,15 +1,17 @@
 import { Request, Response } from 'express';
-import { getLogger, d4l, DateProviderService, booleanUtil } from '@jgithub/ts-gist-pile';
 import { SysConfigSvc } from '../sysconfig/SysConfigSvc';
 import { EntityCrudSvc } from '../entity/EntityCrudSvc';
-const LOG = getLogger(`QaSessionController`)
 import { AUDIO_UPLOAD_DIR, BASE_PATH, TRANSPARENT_AUTH_TOKEN_COOKIE_NAME } from "../constant";
 import { numberUtil } from '@jgithub/ts-gist-pile';
 import { TransparentAuthToken, TransparentAuthTokenAttr } from '../auth/TransparentAuthToken';
 import { QaQuestionReadSvc } from './QaQuestionReadSvc';
 import { S3UploadSvc } from '../s3/S3UploadSvc';
 import { AudioFileNamingSvc } from '../audio/AudioFileNamingSvc';
-
+import { QaAnswerCreateSvc } from '../answer/QaAnswerCreateSvc';
+import { getLogger, d4l, DateProviderService, booleanUtil } from '@jgithub/ts-gist-pile';
+import { QaAnswer } from './QaAnswer';
+import { AuthenticatedEntityProviderSvc } from '../auth/AuthenticatedEntityProviderSvc';
+const LOG = getLogger(`QaSessionController`)
 
 
 export class QaSessionController {
@@ -18,7 +20,9 @@ export class QaSessionController {
     private readonly sysConfigSvc: SysConfigSvc,
     private readonly qaQuestionReadSvc: QaQuestionReadSvc,
     private readonly s3UploadSvc: S3UploadSvc,
-    private readonly audioFileNamingSvc: AudioFileNamingSvc
+    private readonly audioFileNamingSvc: AudioFileNamingSvc,
+    private readonly authenticatedEntityProviderSvc: AuthenticatedEntityProviderSvc,
+    private readonly qaAnswerCreateSvc: QaAnswerCreateSvc,
   ) { }
 
   public async show(req: Request, res: Response): Promise<void> {
@@ -50,13 +54,28 @@ export class QaSessionController {
       LOG.debug(`uploadMyAnswer(): Determined s3FileName = ${d4l(s3FileName)}`)
 
 
+      const qaAnswer: QaAnswer = {
+        entityId: this.authenticatedEntityProviderSvc.tryGetAlreadyAuthenticatedEntityId() as unknown as number,
+        questionUuid: questionUuid,
+        reportedBeginAt: null as unknown as Date,
+        reportedEndAt: new Date()
+      } as QaAnswer
+
       if (booleanUtil.isTruelike(process.env.S3_UPLOADS_ENABLED)) {
-        LOG.debug(`uploadMyAnswer(): S3 uploads are enabled, so will upload to s3.  localAudioFilePath = ${d4l(localAudioFilePath)}`);
+        LOG.debug(`uploadMyAnswer(): process.env.S3_UPLOADS_ENABLED is TRUE, so will upload to s3.  localAudioFilePath = ${d4l(localAudioFilePath)}`);
         
         
-        this.s3UploadSvc.uploadFileToS3(localAudioFilePath, 'test.webm');
+        await this.s3UploadSvc.uploadFileToS3(localAudioFilePath, s3FileName);
       } else {
-        LOG.info(`uploadMyAnswer(): S3 uploads are DISABLED, so skipping upload to s3 of localAudioFilePath = ${d4l(localAudioFilePath)}`);
+        LOG.info(`uploadMyAnswer(): process.env.S3_UPLOADS_ENABLED is false, so skipping upload to s3 of localAudioFilePath = ${d4l(localAudioFilePath)}`);
+      }
+
+      if (booleanUtil.isTruelike(process.env.ANSWER_ROW_CAPTURE_ENABLED)) {
+        LOG.debug(`uploadMyAnswer(): process.env.ANSWER_ROW_CAPTURE_ENABLED is TRUE, so will create a row for qaAnswer = ${d4l(qaAnswer)}`);
+        
+        await this.qaAnswerCreateSvc.createAnswer(qaAnswer);
+      } else {
+        LOG.info(`uploadMyAnswer(): process.env.ANSWER_ROW_CAPTURE_ENABLED is false, so will create a row for qaAnswer = ${d4l(qaAnswer)}`);
       }
     }
   }

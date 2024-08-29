@@ -4,7 +4,10 @@ INSERT INTO entity
 (id, type, pin, comment) VALUES (100, 'user', 'xxxx', 'John Q. Public');
 INSERT INTO entity 
 (id, type, pin, comment) VALUES (1001, 'user', '1001', 'User #1001');
-
+INSERT INTO entity 
+(id, type, pin, comment) VALUES (1002, 'user', '1002', 'User #1002');
+INSERT INTO entity 
+(id, type, pin, comment) VALUES (1003, 'user', '1003', 'User #1003');
 
 INSERT INTO qa_question 
 (uuid, phrase, sequence, audio_file) VALUES ('1ef64a85-9a94-6450-8828-10638dbfcd68', 'What is your name?', 3, 'what_is_your_favorite_color.wav');

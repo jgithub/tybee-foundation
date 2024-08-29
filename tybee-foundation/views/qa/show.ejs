@@ -100,7 +100,7 @@ function updateRecordingVisuals() {
           // }, 2000);
 
           // When the recording stops, process and upload the data
-          mediaRecorder.onstop = () => {
+          mediaRecorder.onstop = async () => {
             gRecordingInProgress = false;
             updateRecordingVisuals();
             const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
@@ -108,22 +108,21 @@ function updateRecordingVisuals() {
             formData.append('audio', audioBlob, 'recording.webm');
             formData.append('question_uuid', document.getElementById('question_uuid').value);
 
-            // Upload the audio file
-            fetch('/answer/uploadMine', {
-              // headers: {
-              //   'Accept': 'application/json',
-              //   // 'Content-Type': 'multipart/form-data'
-              // },
-              method: 'POST',
-              body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Upload success:', data);
-            })
-            .catch(error => {
-                console.error('Upload failed:', error);
-            });
+            try {
+              // Upload the audio file
+              const response = fetch('/answer/uploadMine', {
+                // headers: {
+                //   'Accept': 'application/json',
+                //   // 'Content-Type': 'multipart/form-data'
+                // },
+                method: 'POST',
+                body: formData
+              })
+              const data = await response.json();
+              console.log('Upload success:', data);
+            } catch(err) {
+              console.error('Upload failed:', err);
+            }
           };
       })
       .catch(error => {

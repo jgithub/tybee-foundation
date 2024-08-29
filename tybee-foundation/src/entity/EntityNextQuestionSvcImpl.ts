@@ -8,8 +8,8 @@ export class EntityNextQuestionSvcImpl implements EntityNextQuestionSvc {
   constructor(private readonly postgressConnectionProviderSvc: PostgresConnectionProviderSvc) { }
 
   
-  public async determinetNextQuestionId(entityId: number): Promise<string /* uuid */> {
-    LOG.debug(`determinetNextQuestionId(): Entering with entityId = ${d4l(entityId)}`);
+  public async determineNextQuestionId(entityId: number): Promise<string /* uuid */> {
+    LOG.debug(`determineNextQuestionId(): Entering with entityId = ${d4l(entityId)}`);
 
     const sql = `
 WITH questions AS (
@@ -22,11 +22,11 @@ answers AS (
   FROM qa_answer
   WHERE entity_id = $1
 )
-SELECT q.*
+SELECT q.*, a.uuid AS answer_uuid
 FROM questions q
 LEFT JOIN answers a
 ON q.uuid = a.qa_question_uuid
-WHERE a.qa_question_uuid IS NULL
+WHERE a.uuid IS NULL
 LIMIT 1`;
   
     // Create a new client instance with connection details
@@ -38,12 +38,12 @@ LIMIT 1`;
       await client.connect();
 
       let resultSet = await client.query(sql, [entityId]);
-      LOG.debug(`determinetNextQuestionId(): resultSet.rows = ${d4l(resultSet.rows)}`);
+      LOG.debug(`determineNextQuestionId(): resultSet.rows = ${d4l(resultSet.rows)},   based on sql = ${d4l(sql)}`);
 
-      const questionUuid = resultSet.rows[0].uuid;
+      const questionUuid = resultSet.rows[0]?.uuid;
       return questionUuid
     } catch (err) {
-      LOG.error(`determinetNextQuestionId(): Problem executing SQL.  err = ${d4l(err)}`);
+      LOG.error(`determineNextQuestionId(): Problem executing SQL.  err = ${d4l(err)}`);
     }
     finally {
       // Close the connection

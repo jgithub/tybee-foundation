@@ -9,6 +9,8 @@ INSERT INTO entity
 INSERT INTO entity 
 (id, type, pin, comment) VALUES (1003, 'user', '1003', 'User #1003');
 INSERT INTO entity 
+(id, type, pin, comment) VALUES (1004, 'user', '1004', 'User #1004');
+INSERT INTO entity 
 (id, type, pin, comment) VALUES (2222, 'user', '2222', 'User #2222');
 
 

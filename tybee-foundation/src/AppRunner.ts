@@ -95,6 +95,15 @@ export class AppRunner {
       res.render('instructions', { ...controllerProps, title: 'Hello, world!' });
     });
 
+    app.get(`${BASE_PATH}thanks`, (req, res) => {
+      if (authenticatedEntityProviderSvc.tryGetAlreadyAuthenticatedEntityId() == null) {
+        // NOT signed in
+        res.redirect(302, `${BASE_PATH}user/session/new`);
+        return;
+      } 
+      res.render('thanks', { ...controllerProps, title: 'Hello, world!' });
+    });
+
     app.listen(port, () => {
       console.log(`[server]: Server is running at http://localhost:${port}`);
     });

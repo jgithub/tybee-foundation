@@ -24,9 +24,6 @@ function getNextQuestionAsync() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
-        // document.getElementById("demo").innerHTML =
-        // this.responseText;
-        // alert(this.responseText)
         const jsonResponse = JSON.parse(this.responseText);
         const questionUuid = jsonResponse.myNextQuestionUuid
         resolve(questionUuid)
@@ -37,13 +34,13 @@ function getNextQuestionAsync() {
   })
 }
 
-async function stopRecordingAndSubmit() {
+async function triggerStopRecording() {
   if (mediaRecorder != null) {
-    LOG.debug(`stopRecordingAndSubmit(): Stopping mediaRecorder...`);
+    LOG.debug(`triggerStopRecording(): Stopping mediaRecorder...`);
     mediaRecorder.stop();
-    LOG.debug(`stopRecordingAndSubmit(): mediaRecorder stopped.`);
+    LOG.debug(`triggerStopRecording(): mediaRecorder stopped.`);
   } else {
-    LOG.debug(`stopRecordingAndSubmit(): No mediaRecorder to stop.`);
+    LOG.debug(`triggerStopRecording(): No mediaRecorder to stop.`);
   }
 }
 
@@ -109,15 +106,7 @@ async function populateTheNextQuestion() /* Promise<boolean> */ {
           updateRecordingVisuals();
       };
 
-      LOG.debug('Preparing to start MediaRecorder...');
-      // Auto-Start recording
-      // mediaRecorder.start();
       updateRecordingVisuals();
-
-      // Stop recording after 5 seconds (or use a stop button)
-      // setTimeout(() => {
-      //     mediaRecorder.stop();
-      // }, 2000);
 
       // When the recording stops, process and upload the data
       mediaRecorder.onstop = async () => {
@@ -145,12 +134,12 @@ async function populateTheNextQuestion() /* Promise<boolean> */ {
           LOG.debug(`Upload success.  responseJson = ${JSON.stringify(responseJson)}`);
           await populateTheNextQuestion(); 
         } catch(err) {
-          console.error('Upload failed:', err);
+          LOG.error('Upload failed:', err);
         }
       };
     })
     .catch(error => {
-        console.error('Microphone access denied:', error);
+        LOG.error('Microphone access denied:', error);
     })
 
 window.addEventListener('load', async function () {
@@ -163,7 +152,7 @@ window.addEventListener('load', async function () {
 
 <body>
   <div id="recording-true" style="display: none;">
-    <div style="text-align: center;"><span style="color: red">&bull;</span> Recording...</div>
+    <div style="text-align: center;"><span style="color: red; font-size: 3rem; line-height: 1rem;">&bull;</span> Recording...</div>
   </div>
   <div id="recording-false"  style="display: none;">
     <div style="text-align: center;"><span style="color: gray">Paused.</span></div>
@@ -173,7 +162,7 @@ window.addEventListener('load', async function () {
     <input type="file" name="file" id="file" style="display: none"/>
     <input type="hidden" id="question_uuid" name="question_uuid" required>
   </form>
-  <button class="btn btn-primary" onclick="stopRecordingAndSubmit()">Submit and Continue</button>
+  <button class="btn btn-primary" onclick="triggerStopRecording()">Submit and Continue</button>
 </body>
 
 

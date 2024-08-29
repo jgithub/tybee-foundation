@@ -78,5 +78,6 @@ export class QaSessionController {
         LOG.info(`uploadMyAnswer(): process.env.ANSWER_ROW_CAPTURE_ENABLED is false, so will create a row for qaAnswer = ${d4l(qaAnswer)}`);
       }
     }
+    res.json({});
   }
 }

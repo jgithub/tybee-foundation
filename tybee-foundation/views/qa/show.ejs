@@ -30,9 +30,11 @@ function getNextQuestionAsync() {
 }
 
 async function stopRecordingAndSubmit() {
-  console.log(`stopRecordingAndSubmit()`);
   if (mediaRecorder != null) {
+    console.log(`stopRecordingAndSubmit(): Stopping mediaRecorder...`);
     mediaRecorder.stop();
+  } else {
+    console.log(`stopRecordingAndSubmit(): No mediaRecorder to stop.`);
   }
 }
 
@@ -75,23 +77,33 @@ function updateRecordingVisuals() {
   }
 }
 
-async function populateTheNextQuestion() {
+async function populateTheNextQuestion() /* Promise<boolean> */ {
   console.log(`populateTheNextQuestion(): Entering`);
   const questionUuid = await getNextQuestionAsync();
   const question = await findQuestionByUuidAsync(questionUuid);
-  document.getElementById('question_phrase').innerText = question.phrase;
-  console.log(`populateTheNextQuestion(): question.audioFile = ${question.audioFile}`);
-  const audioFile = `<%= BASE_PATH %>audio/${question.audioFile}`
-  // const audioFile = question.audioFile;
-  console.log(`populateTheNextQuestion(): audioFile = ${audioFile}`);
+  if (question != null) {
+    document.getElementById('question_phrase').innerText = question.phrase;
+    console.log(`populateTheNextQuestion(): question.audioFile = ${question.audioFile}`);
+    const audioFile = `<%= BASE_PATH %>audio/${question.audioFile}`
+    // const audioFile = question.audioFile;
+    console.log(`populateTheNextQuestion(): audioFile = ${audioFile}`);
 
-  try {
-    new Audio(audioFile).play();
-  } catch (err) {
-    console.error(`populateTheNextQuestion(): error playing audio: ${err}`);
+    try {
+      console.log(`populateTheNextQuestion(): Will attempt to play audioFile = ${audioFile}...`);
+      await new Audio(audioFile).play();
+    } catch (err) {
+      console.log(`populateTheNextQuestion(): warning.  Not playing audioFile = ${audioFile} due to err: ${err}`);
+    }
+
+    document.getElementById('question_uuid').value = question.uuid; 
+    return true
+  } else {
+    document.getElementById('question_phrase').innerText = "";
+    document.getElementById('question_uuid').value = "";
+    window.location.assign("/thanks")
+    return false
   }
-
-  document.getElementById('question_uuid').value = question.uuid;  
+ 
 }
 
 // function requestAccessToMicrophone() {
@@ -125,6 +137,8 @@ async function populateTheNextQuestion() {
 
           // When the recording stops, process and upload the data
           mediaRecorder.onstop = async () => {
+            console.log('In the callback handler for mediaRecorder.onstop()...');
+
             gRecordingInProgress = false;
             updateRecordingVisuals();
             const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
@@ -133,6 +147,7 @@ async function populateTheNextQuestion() {
             formData.append('question_uuid', document.getElementById('question_uuid').value);
 
             try {
+              console.log('POSTing audio to /answer/uploadMine...');
               // Upload the audio file
               const response = await fetch('/answer/uploadMine', {
                 // headers: {
@@ -142,10 +157,8 @@ async function populateTheNextQuestion() {
                 method: 'POST',
                 body: formData
               })
-              const data = await response.json();
-              console.log('Upload success:', data);
-
-
+              const responseJson = await response.json();
+              console.log(`Upload success.  responseJson = ${JSON.stringify(responseJson)}`);
               await populateTheNextQuestion(); 
             } catch(err) {
               console.error('Upload failed:', err);

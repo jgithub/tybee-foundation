@@ -15,6 +15,7 @@ import { EntityNextQuestionSvcImpl } from "./entity/EntityNextQuestionSvcImpl";
 import { QaQuestionReadSvcImpl } from "./qa/QaQuestionReadSvcImpl";
 import { AuthenticatedEntityProviderSvc } from "./auth/AuthenticatedEntityProviderSvc";
 import { S3UploadSvcImpl } from "./s3/S3UploadSvcImpl";
+import { AudioFileNamingSvcImpl } from "./audio/AudioFileNamingSvcImpl";
 
 const container = new Container();
 // Lower order services ^^^^^^^
@@ -30,7 +31,8 @@ const userSessionController = new UserSessionController(sysConfigSvc, entityCrud
 const authenticatedEntityProviderSvc = new AuthenticatedEntityProviderSvcImpl();
 const qaQuestionsReadSvc = new QaQuestionReadSvcImpl(postgressConnectionProviderSvc);
 const s3UploadSvc = new S3UploadSvcImpl();
-const qaSessionController = new QaSessionController(sysConfigSvc, qaQuestionsReadSvc, s3UploadSvc);
+const audioFileNamingSvc = new AudioFileNamingSvcImpl(authenticatedEntityProviderSvc);
+const qaSessionController = new QaSessionController(sysConfigSvc, qaQuestionsReadSvc, s3UploadSvc, audioFileNamingSvc);
 const entityNextQuestionSvc = new EntityNextQuestionSvcImpl(postgressConnectionProviderSvc);
 const requestInfoController = new RequestInfoController(postgressConnectionProviderSvc, authenticatedEntityProviderSvc, entityNextQuestionSvc);
 const routerBuilderSvc = new RouterBuilderSvcImpl(userSessionController, requestInfoController, qaSessionController);

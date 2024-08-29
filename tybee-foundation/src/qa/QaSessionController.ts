@@ -8,6 +8,7 @@ import { numberUtil } from '@jgithub/ts-gist-pile';
 import { TransparentAuthToken, TransparentAuthTokenAttr } from '../auth/TransparentAuthToken';
 import { QaQuestionReadSvc } from './QaQuestionReadSvc';
 import { S3UploadSvc } from '../s3/S3UploadSvc';
+import { AudioFileNamingSvc } from '../audio/AudioFileNamingSvc';
 
 
 
@@ -16,7 +17,8 @@ export class QaSessionController {
   constructor(
     private readonly sysConfigSvc: SysConfigSvc,
     private readonly qaQuestionReadSvc: QaQuestionReadSvc,
-    private readonly s3UploadSvc: S3UploadSvc
+    private readonly s3UploadSvc: S3UploadSvc,
+    private readonly audioFileNamingSvc: AudioFileNamingSvc
   ) { }
 
   public async show(req: Request, res: Response): Promise<void> {
@@ -44,8 +46,14 @@ export class QaSessionController {
 
       const localAudioFilePath = theFirstAudioObject.path;
       
+      const s3FileName = this.audioFileNamingSvc.generateMicrophoneAudioFileName(qaQuestion);
+      LOG.debug(`uploadMyAnswer(): Determined s3FileName = ${d4l(s3FileName)}`)
+
+
       if (booleanUtil.isTruelike(process.env.S3_UPLOADS_ENABLED)) {
         LOG.debug(`uploadMyAnswer(): S3 uploads are enabled, so will upload to s3.  localAudioFilePath = ${d4l(localAudioFilePath)}`);
+        
+        
         this.s3UploadSvc.uploadFileToS3(localAudioFilePath, 'test.webm');
       } else {
         LOG.info(`uploadMyAnswer(): S3 uploads are DISABLED, so skipping upload to s3 of localAudioFilePath = ${d4l(localAudioFilePath)}`);

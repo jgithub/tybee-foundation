@@ -33,6 +33,7 @@ It demonstrates all the things I care about
 * The first thing in any log line is the `"methodName(): "`
 * Most software codebases seem to start off as science fair projects where stuff keeps getting bolted on.   And it works and the business is operating.   But everything depends on everything and it's super brittle and it's hard to test.   So nobody wants to change anything.   If you follow these guidelines and DON'T CHEAT, you will stay agile and light with your monolith for years to come
 * If you look hard enough at ts-gist-pile, you can find that the beginnings of lightweight observability are baked in from day 1.    You should find ways to bake in observability from day 1
+* This repo makes use of git-lfs as all projects should
 
 # What's Missing
 * I need to bake tracing support into ts-gist-pile.  (But to do so I probably need to create ts-node-pile which includes ts-gist-pile but extends it with node-only features)

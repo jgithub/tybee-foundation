@@ -29,7 +29,7 @@ It demonstrates all the things I care about
 * Makefiles are your friend
 * The project tree follows folders-by-feature instead of folders-by-type which is superior in all cases.   (This is also sometimes referred to as feature-folders vs tech-folders)
 * Separation of concerns
-* Use the right log level
+* Use the right log level.   If you want to see DEBUG logs then set LOG_DEBUG=1 in your environment.   Same with TRACE and INFO
 * The first thing in any log line is the `"methodName(): "`
 * Most software codebases seem to start off as science fair projects where stuff keeps getting bolted on.   And it works and the business is operating.   But everything depends on everything and it's super brittle and it's hard to test.   So nobody wants to change anything.   If you follow these guidelines and DON'T CHEAT, you will stay agile and light with your monolith for years to come
 * If you look hard enough at ts-gist-pile, you can find that the beginnings of lightweight observability are baked in from day 1.    You should find ways to bake in observability from day 1
